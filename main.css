@@ -1,0 +1,232 @@
+body{
+  background-color: #e9ebee;
+  font-family: "nationale-demibold", sans-serif;
+  font-weight: lighter;
+}
+/* -- Nav Bar -- */
+.logo{
+  float: left;
+  width: 250px;
+  font-weight: lighter;
+  font-family: "nationale-demibold", sans-serif;
+  padding-top: 5px;
+  padding-left: 68px;
+}
+.logo > a {
+  color: white;
+}
+.nav{
+  /*position: fixed;*/
+  position: relative;
+  z-index: 10;
+  height: 130px;
+  margin: 0;
+  /*background-color: rgba(23,31,5,.91);*/
+  background-color: #495149;
+  margin-bottom: 0 !important;
+  /*text-align: center;*/
+  /*background: url("goldtexture.jpg")*/
+}
+
+.links > ul {
+    align-items: center;
+    list-style-type: none;
+    margin: 0 !important;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    padding-top: 4%;
+    display: inline-block;
+    padding-left: 20px;
+}
+
+.links > ul > li {
+    float: left;
+}
+
+.links > ul > li > a {
+    /*padding-top: 60%;*/
+    /*border-right:  2px solid;*/
+    border-left: 2px solid;
+    border-color: white;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 5px 25px;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: "nationale-demibold", sans-serif;
+    text-transform: uppercase;
+    font-weight: lighter;
+    letter-spacing: 3px;
+    font-size: x-large;
+}
+
+.links > ul > li > a:hover {
+    color: rgba(255, 152, 0, 0.66);
+    text-decoration: none;
+}
+.logo :hover {
+    color: rgba(255, 152, 0, 0.66);
+    text-decoration: none !important;
+}
+/*Search*/
+.navbar-right{
+  margin-top: -45px;
+  margin-right: 210px;
+}
+/* Profile Image */
+.deansimage{
+  margin-right: -10px;
+  position: inline-block;
+  float:right;
+  margin-left: 925px;
+  width: 120px;
+  height: 120px;
+  text-align: center;
+  float:left;
+}
+.img-circle{
+  margin-right: -330px;
+  margin-top: -118px;
+  max-width:100%;
+  max-height:100%;
+  border-radius: 50%;
+  /*vertical-align: middle;*/
+}
+/* ------------- */
+/* -- Nav Bar -- */
+
+/* Container/Top of Posts */
+.container{
+  margin-bottom: 150px;
+}
+
+.pheader{
+  font-size: 40px;
+  color: #495149;
+  float:left;
+}
+.sheader{
+  font-size: 40px;
+  color: #495149;
+}
+/* --------------------- */
+
+/* --------Posts-------- */
+.foodPost{
+  background-color: white;
+
+  text-align: center;
+  color: #495149;
+  border-top: 2px solid;
+  /*border-width: 2px;*/
+  border-color: #e9ebee;
+  border-color: none;
+  height: 200px;
+  padding-top: 25px;
+}
+.food{
+  font-size: 30px;
+}
+.description{
+  font-size: 18px;
+
+}
+/* ------------ Search Bar -------------*/
+#search {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 60px;
+}
+#label {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    z-index: 20;
+}
+#label label {
+    display: block;
+    width: 60px;
+    height: 60px;
+    background: url("../img/search.png") 0 0;
+    font-size: 0;
+    color: rgba(0, 0, 0, 0);
+    text-indent: -9999px;
+    cursor: pointer;
+}
+#label label:hover {
+    background: url("../img/search.png") -60px 0
+}
+#label.active label {
+    background: url("../img/search.png") -60px 0
+}
+#input {
+    position: absolute;
+    top: 0;
+    left: 60px;
+    width: 450px;
+    height: 60px;
+    z-index: 5;
+    overflow: hidden;
+}
+#input input {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: -450px;
+    width: 450px;
+    height: 100%;
+    margin: 0;
+    padding: 0 10px;
+    border: none;
+    background-color: #23688b;
+    color: #fff;
+    font-size: 18px;
+    backface-visibility: none;
+    border-radius: 0;
+    transition: left 0;
+}
+#input input:focus {
+    outline: none
+}
+#input.focus {
+    z-index: 20
+}
+#input.focus input {
+    left: 0;
+    transition: left 0.3s;
+}
+/* ------------ Search Bar -------------*/
+/* post.html */
+.postBackground{
+  margin-top:100px;
+  background-color: white;
+  height: 300px;
+}
+.postBackground > h1{
+  margin-bottom: 75px;
+  margin-left: 400px;
+  padding-top: 30px;
+}
+.description{
+  height:200px;
+
+}
+.row > col-md-4 > h3{
+  margin-top: 30px;
+}
+.typeFood{
+  height: 50px;
+}
+.input-group-addon{ /*text for typeFood */
+  font-size: 20px
+}
+/*.gAway{
+  float:left;
+}*/
+/*.gAwayForm{
+  float:right;
+}*/
