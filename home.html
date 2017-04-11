@@ -13,70 +13,91 @@
     <!-- <script type="text/javascript" src="main.js"></script> -->
     <link rel="stylesheet" href="main.css" type="text/css" />
 </head>
+    
   <body>
-    <div class = "nav">
-      <h1 class="logo"><a href="#home">Free Food Movement</a></h1>
-      <div class = "links">
-  	    <ul>
-  	      <li><a class="active" href="#home">about</a></li>
-  	      <li><a href="#news">posts</a></li>
-
-  	    </ul>
-      </div>
-      <form class="navbar-form navbar-right">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search">
-        </div>
-        <button type="submit" class="btn btn-default">Submit</button>
-      </form>
-      <div class = "deansimage">
-  			<img class ="img-circle" src ="dean.jpg"> </img>
-  		</div>
-      <!-- <form class="navbar-form navbar-left">
-       <div class="form-group">
-         <input type="text" class="form-control" placeholder="Search">
-       </div>
-       <button type="submit" class="btn btn-default">Submit</button>
-     </form> -->
-		<!-- </div>
-    <div class = "container">
-      <div class = "postings">
-      <p class = "pheader">All Postings</p>
-      <p class = "sheader">Sort</p>
-    </div> -->
+        <header>
+        <div id="headerWrapper">
+            <a href="home.html"><img id="logo" src="imgs/logo.png" alt="logo"></a>
+            <ul>
+                <li><a href="search.html">Search</a></li>
+                <li><a href="post.html">Create Post</a></li>
+                <li><a href="about.html">About</a></li>
+                
+            </ul>
+            <div id="personal">
+                <a href="profile.html"><img id="profilePhoto" src="imgs/dean.jpg" alt="profile photo"></a>
+                <a href="messages.html"><img id="messageIcon" src="imgs/messages.png" alt="envelope icon"></a>
+                </div>
     </div>
+    </header> 
+            
     <div class = "container">
       <div class="row">
         <div class="col-md-9">
           <p class="pheader">All Postings</p>
         </div>
-        <div class="col-md-3">
-          <p class="sheader">Sort</p>
+        <div class="col-md-2">
+            
+        <div class="dropdown" id="sortBy">
+          <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Sort By
+          <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Closest to me</a></li>
+            <li><a href="#">Newest posts</a></li>
+            <li><a href="#">Highest rated</a></li>
+          </ul>
+        </div>
+            
         </div>
       </div>
+        
+        <div class="foodFeed">
+        
       <div class = "foodPost">
-        <p class = "food"> 20 Watermelons </p>
-        <p class = "description"> Freshly Grown! Description description ... </p>
+          <a href="profile.html"><img class="userPhoto" src="imgs/dean.jpg" alt="profile photo"></a>
+          <ul class="postUser">
+              <li p class="username">Peppy C.</li>
+              <li p class="distance">0.3 mile away</li>
+              <img class="stars" src="imgs/stars.png" alt="stars">
+          </ul>
+        <div class="foodText">
+            <p class = "food"> 20 Watermelons </p>
+            <p class = "description"> Freshly Grown! Description description ... </p>
+        </div>
+          <img class="messageButton" src="imgs/message-button.png" alt="message button">
       </div>
-      <div class = "foodPost">
-        <p class = "food"> 5 Baskets of Apples </p>
-        <p class = "description"> Freshly Grown! Description description ... </p>
+        
+       <div class = "foodPost">
+          <a href="profile.html"><img class="userPhoto" src="imgs/dean.jpg" alt="profile photo"></a>
+          <ul class="postUser">
+              <li p class="username">Peppy C.</li>
+              <li p class="distance">0.3 mile away</li>
+              <img class="stars" src="imgs/stars.png" alt="stars">
+          </ul>
+        <div class="foodText">
+            <p class = "food"> 20 Watermelons </p>
+            <p class = "description"> Freshly Grown! Description description ... </p>
+        </div>
+            <img class="messageButton" src="imgs/message-button.png" alt="message button">
       </div>
+        
       <div class = "foodPost">
-        <p class = "food"> 3 lbs of Red Potatoes </p>
-        <p class = "description"> Freshly Grown! Description description ... </p>
+          <a href="profile.html"><img class="userPhoto" src="imgs/dean.jpg" alt="profile photo"></a>
+          <ul class="postUser">
+              <li p class="username">Peppy C.</li>
+              <li p class="distance">0.3 mile away</li>
+              <img class="stars" src="imgs/stars.png" alt="stars">
+          </ul>
+        <div class="foodText">
+            <p class = "food"> 20 Watermelons </p>
+            <p class = "description"> Freshly Grown! Description description ... </p>
+        </div>
+          <img class="messageButton" src="imgs/message-button.png" alt="message button">
       </div>
     </div>
-
-
-
-    <!-- <div class="row">
-      <div class="col-md-8">
-        <a class="pheader">All Postings</a>
+      
+        <div id="footer"> Copyright 2017 FFM Group. All rights reserved.</div>
       </div>
-      <div class="col-md-4">
-        <a class="sheader">Sort</a>
-      </div>
-    </div> -->
+
   </body>
 </html>
