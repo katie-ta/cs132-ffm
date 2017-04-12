@@ -33,13 +33,16 @@
     </header> 
             
     <div class = "container">
-        <h1 style="margin-left:10%;">Search for Posts:</h1>
+        <h1 style="margin-left:10%;">Create a post:</h1>
         <div id="createPost">
-            <p style="margin:10px;">Searching for something in particular? Use any of the constraints below to narrow down postings!
-            </p>
         <div class="form-group">
-          <label for="keywords">Keywords</label>
-          <input id="keywords" name="keywords" type="text" class="form-control" >
+          <label for="post-title">Title</label>
+          <input id="post-title" name="post-title" type="text" class="form-control" >
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea class="form-control" rows="5" id="description"></textarea>
         </div>
 
         <div class="form-group">
@@ -59,7 +62,7 @@
         
 
           <div class="form-group">
-             <p>Select one:</p>
+             <p>What kind of produce?</p>
             <label class="radio-inline">
               <input id="perishable" type="radio" name="optradio">Perishable
             </label>
@@ -69,7 +72,7 @@
           </div>
         
           <div class="form-group">
-            <p>Select one:</p>
+            <p>What kind of serving?</p>
             <label class="radio-inline">
               <input id="snack" type="radio" name="optradio">Snack
             </label>
