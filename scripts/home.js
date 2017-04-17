@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  $('.messageButton').on("click", sendMessage);
+  $('#sendMessage').on("click", sendMessage);
 
   function sendMessage() {
     console.log("message button clicked");

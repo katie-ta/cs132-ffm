@@ -13,23 +13,23 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- <script type="text/javascript" src="main.js"></script> -->
-    <script src="scripts/home.js"></script>
-    <link rel="stylesheet" href="main.css" type="text/css" />
+    <script src="../scripts/home.js"></script>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" />
 </head>
     
   <body>
         <header>
         <div id="headerWrapper">
-            <a href="home.html"><img id="logo" src="imgs/logo.png" alt="logo"></a>
+            <a href="home.html"><img id="logo" src="../imgs/logo.png" alt="logo"></a>
             <ul>
                 <li><a href="search.html">Search</a></li>
-                <li><a href="post.html">Create Post</a></li>
+                <li><a href="create_post.html">Create Post</a></li>
                 <li><a href="about.html">About</a></li>
                 
             </ul>
             <div id="personal">
-                <a href="profile.html"><img id="profilePhoto" src="imgs/dean.jpg" alt="profile photo"></a>
-                <a href="messages.html"><img id="messageIcon" src="imgs/messages.png" alt="envelope icon"></a>
+                <a href="profile.html"><img id="profilePhoto" src="../imgs/dean.jpg" alt="profile photo"></a>
+                <a href="messages.html"><img id="messageIcon" src="../imgs/messages.png" alt="envelope icon"></a>
                 </div>
     </div>
     </header> 
@@ -44,13 +44,19 @@
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">Modal Header</h4>
+              <h4 class="modal-title">New Message</h4>
             </div>
             <div class="modal-body">
-              <p>Some text in the modal.</p>
-            </div>
+              <!-- message form-->
+              <div class="form-group">
+                 <!-- <label for="description">Message</label> -->
+                <textarea class="form-control" rows="3" placeholder="Hey! I'm _____ and I was messaging about your product!"></textarea>
+              </div>
+              
+            
+            </div> <!-- end modal body-->
             <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <input id="sendMessage" type="submit" class="btn btn-info" value="Send" data-dismiss="modal">
             </div>
           </div>
 
@@ -77,45 +83,45 @@
         <div class="foodFeed">
         
       <div class = "foodPost">
-          <a href="profile.html"><img class="userPhoto" src="imgs/dean.jpg" alt="profile photo"></a>
+          <a href="profile.html"><img class="userPhoto" src="../imgs/dean.jpg" alt="profile photo"></a>
           <ul class="postUser">
               <li p class="username">Peppy C.</li>
               <li p class="distance">0.3 mile away</li>
-              <img class="stars" src="imgs/stars.png" alt="stars">
+              <img class="stars" src="../imgs/stars.png" alt="stars">
           </ul>
         <div class="foodText">
-            <p class = "food"> 20 Watermelons </p>
+            <a href="post.html"><p class = "food"> 20 Watermelons </p></a>
             <p class = "description"> Freshly Grown! Description description ... </p>
         </div>
-          <input type="image" class="messageButton" src="imgs/message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
+          <input type="image" class="messageButton" src="../imgs/message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
       </div>
         
        <div class = "foodPost">
-          <a href="profile.html"><img class="userPhoto" src="imgs/dean.jpg" alt="profile photo"></a>
+          <a href="profile.html"><img class="userPhoto" src="../imgs/dean.jpg" alt="profile photo"></a>
           <ul class="postUser">
               <li p class="username">Peppy C.</li>
               <li p class="distance">0.3 mile away</li>
-              <img class="stars" src="imgs/stars.png" alt="stars">
+              <img class="stars" src="../imgs/stars.png" alt="stars">
           </ul>
         <div class="foodText">
-            <p class = "food"> 20 Watermelons </p>
+          <a href="post.html"><p class = "food"> 20 Watermelons </p></a>
             <p class = "description"> Freshly Grown! Description description ... </p>
         </div>
-            <input type="image" class="messageButton" src="imgs/message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
+            <input type="image" class="messageButton" src="../imgs/message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
       </div>
         
         <div class = "foodPost">
-            <a href="profile.html"><img class="userPhoto" src="imgs/dean.jpg" alt="profile photo"></a>
+            <a href="profile.html"><img class="userPhoto" src="../imgs/dean.jpg" alt="profile photo"></a>
             <ul class="postUser">
                 <li p class="username">Peppy C.</li>
                 <li p class="distance">0.3 mile away</li>
-                <img class="stars" src="imgs/stars.png" alt="stars">
+                <img class="stars" src="../imgs/stars.png" alt="stars">
             </ul>
           <div class="foodText">
-              <p class = "food"> 20 Watermelons </p>
+              <a href="post.html"><p class = "food"> 20 Watermelons </p></a>
               <p class = "description"> Freshly Grown! Description description ... </p>
           </div>
-            <input type="image" class="messageButton" src="imgs/message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
+            <input type="image" class="messageButton" src="../imgs/message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
         </div>
     </div>
       
