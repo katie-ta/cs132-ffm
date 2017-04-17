@@ -30,6 +30,9 @@ $(document).ready(function() {
     	console.log("non-perishable"); 
     }
 
-    // then tell server what to search for and which filters!!
+    app.post("/createPost", function() {
+        //TODO: send back all data to be inserted into database
+        //TODO: make sure all column info are included
+    })
   }
 });

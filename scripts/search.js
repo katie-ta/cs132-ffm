@@ -28,5 +28,8 @@ $(document).ready(function() {
     }
 
     // then tell server what to search for and which filters!!
+
+    // TODO: send get or post (idk which is better) request back to server with information to search on
+
   }
 });
