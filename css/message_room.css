@@ -1,0 +1,64 @@
+.messageBox{
+  background-color: white;
+  color: #495149;
+  border: 2px solid #DCDCDC;
+  padding: 20px;
+  padding-top: 25px;
+}
+.messageHeader {
+    font-size: 30px;
+  color: #495149;
+  float:left;
+  font-weight: bold;
+  margin-left:20%;
+}
+
+.avatar{
+    width: 60px;
+    cursor: pointer;
+    margin-left:20px;
+    border-radius: 50%;
+    display:inline-block;
+}
+
+.stars{
+    width:80px;
+}
+
+.userInfo{
+    display:inline;
+    color:black;
+    margin-right:2%;
+    margin-left:2%;
+}
+.messageList{
+    margin-left:15%;
+}
+
+.sendMessageBody {
+    display:inline-block;
+    height:100px;
+}
+
+.messageBody {
+  display: inline-block;
+  text-align: center;
+}
+
+.postUser{
+    display:inline-block;
+    color:black;
+    margin-right:2%;
+}
+
+#createPost{
+    margin-left:10%;
+    padding:15px;
+    background-color:white;
+    border: 2px solid #C0C0C0;
+    width:60%;
+}
+
+#sendMessageButton {
+  margin-top: 10px;
+}

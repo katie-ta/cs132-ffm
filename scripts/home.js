@@ -4,6 +4,7 @@ $(document).ready(function() {
   // function sendMessage() {
   //   console.log("message button clicked");
   // }
+  $('#sendMessage').on("click", sendMessage);
 
   $("#sendMessage").click(function() {
     $.get("/createRoom", function(response) {

@@ -4,6 +4,29 @@ body{
   font-weight: lighter;
 }
 
+.label {
+    font-size: 13px;
+}
+
+.postDescription {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.userInfo {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.zipcode {
+    display: inline-block;
+}
+
+.send-message-form {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
 /* -- Nav Bar -- */
 #logo{
   width: 300px;
@@ -171,6 +194,8 @@ h1{
 }
 
 
+
+
 /* --------Posts-------- */
 .foodPost{
   background-color: white;
@@ -307,6 +332,21 @@ h1{
     left: 0;
     transition: left 0.3s;
 }
+/* ------------ Messages  -------------*/
+
+.messageBox{
+  background-color: white;
+  color: #495149;
+  border: 2px solid #DCDCDC;
+  height: 180px;
+  padding-top: 25px;
+}
+
+.messageList{
+    margin-left:15%;
+}
+
+
 /* ------------ Search Bar -------------*/
 
 .dropdown-toggle { 
