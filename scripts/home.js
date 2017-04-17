@@ -1,9 +1,15 @@
 $(document).ready(function() {
-  $('.messageButton').on("click", sendMessage);
+  // $('#sendMessage').on("click", sendMessage);
+  //
+  // function sendMessage() {
+  //   console.log("message button clicked");
+  // }
 
-  function sendMessage() {
-    console.log("message button clicked");
-  }
+  $("#sendMessage").click(function() {
+    $.get("/createRoom", function(response) {
+      window.location = "/" + response.roomId;
+    });
+  });
     // then tell server what to search for and which filters!!
-  
+
 });
