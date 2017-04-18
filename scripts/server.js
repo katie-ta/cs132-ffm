@@ -10,6 +10,7 @@ var http = require('http');
 var app = express();
 
 var server = http.createServer(app);
+
 var io = require('socket.io').listen(server);
 
 var roomIds = new Set();
@@ -22,7 +23,6 @@ app.engine('html', engines.hogan); // tell Express to run .html files through Ho
 app.set('views', __dirname + '/pages'); // tell Express where to find templates, in this case the '/pages' directory
 app.set('view engine', 'html'); //register .html extension as template engine so we can render .html pages
 app.use(express.static(__dirname + '/scripts'));
-
 var conn = anyDB.createConnection('sqlite3://ffm.db');
 
 // create message table
@@ -97,6 +97,10 @@ app.get('/searchPost', function(request, response) {
 
 	// TODO: create foodPost div, insert all information, append it to results div
 })
+
+server.listen(8080, function() {
+  console.log("Listening on port 8080");
+});
 
 
 
