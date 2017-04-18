@@ -6,14 +6,18 @@ var path = require('path');
 var hogan = require('hogan.js');
 var begin = require('any-db-transaction');
 var http = require('http');
+var bcrypt = require('bcrypt');
 
 var app = express();
-
 var server = http.createServer(app);
-
 var io = require('socket.io').listen(server);
 
 var roomIds = new Set();
+var userIds = new Set();
+var postIds = new Set();
+
+var posts = [];
+
 app.use(express.static(path.join(__dirname, '/css')));
 app.use(express.static(path.join(__dirname, '/imgs')));
 
@@ -25,20 +29,31 @@ app.engine('html', engines.hogan); // tell Express to run .html files through Ho
 app.set('views', __dirname + '/pages'); // tell Express where to find templates, in this case the '/pages' directory
 app.set('view engine', 'html'); //register .html extension as template engine so we can render .html pages
 app.use(express.static(__dirname + '/scripts'));
-var conn = anyDB.createConnection('sqlite3://ffm.db');
+
+var conn = anyDB.createConnection('sqlite3://ffm.db'); // create database connection
+
+// stuff to use for bcrypt password encryptions
+const saltRounds = 10;
+const myPlaintextPassword = 's0/\/\P4$$w0rD';
+const someOtherPlaintextPassword = 'not_bacon';
 
 // create message table
-var createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
+const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
+const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
+const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id TEXT PRIMARY KEY, userId TEXT, title TEXT, description TEXT, createdAt TIMESTAMP, perishable BOOLEAN, type TEXT, zipcode INTEGER, available, BOOLEAN)';
 
 // TODO: create all table schemas and query like below:
-var q = conn.query( createMessageTable , function(error, data){
-  if (error != null) {
-    console.log(error);
-  }
+conn.query( createMessageTable , function(error, data){
+  if (error != null) { console.log(error); }
 });
 
-// TODO: create table for users
-// TODO: create table for posts
+conn.query( createUserTable , function(error, data){
+  if (error != null) { console.log(error); }
+});
+
+conn.query( createPostTable , function(error, data){
+  if (error != null) { console.log(error); }
+});
 
 // create room identifier
 function generateRoomIdentifier() {
@@ -53,13 +68,14 @@ function generateRoomIdentifier() {
   return result;
 }
 
-console.log("here");
 
 // get the home page
 app.get('/', function(request, response) {
-	// TODO: query database for all available posts, default sorted by createdBy column
+	// TODO: query database for all available posts, default sorted by createdAt column
+	var q = 'SELECT * FROM posts WHERE available == true';
 
-	// TODO: when a user wants to resort, requery database and order by something else?
+
+	// TODO: when a user wants to re-sort, requery database and order by something else?
 
   response.render('home.html');
 })
@@ -71,7 +87,15 @@ app.get('/about', function(request , response) {
 
 app.get('/createpost', function(request , response) {
 	console.log("create post server");
+	// add post to database
+
 	response.render('createpost.html');
+})
+
+app.post('/savepost', function(request, response) {
+	console.log(request);
+	var description = request.body.description;
+	var title = request.body.title;
 })
 
 app.get('/search', function(request, response) {
@@ -88,12 +112,24 @@ app.get('/search', function(request, response) {
 	response.render('search.html');
 })
 
+app.get('/sortNewest', function(request, response) {
+	// use sort-by package by npm
 
-// app.get('/:roomName', function(request, response) {
-//   response.render('room.html', {roomName:  request.params.roomName});
-// });
+	response.render('home.html');
+})
 
-// TODO: create get requests for each page: 
+app.get('/sortClosest', function(request, response) {
+	// use sort-by package by npm
+
+	response.render('home.html');
+})
+
+app.get('/sortRating', function(request, response) {
+	// use sort-by package by npm
+	response.render('home.html');
+})
+
+
 
 // get request for profile.html (for someone's profile)
 app.get('/:userId', function(request, response) {

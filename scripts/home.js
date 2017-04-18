@@ -1,11 +1,28 @@
 $(document).ready(function() {
 
-  $('#sendMessage').on("click", sendMessage);
-
   $("#sendMessage").click(function() {
     $.get("/createRoom", function(response) {
       window.location = "/" + response.roomId;
     });
+
+  $("#sortByClosest").click(function() {
+  	$.get("/sortClosest", function(response) {
+
+    });
+  })
+
+  $("#sortByNewest").click(function() {
+  	$.get("/sortNewest", function(response) {
+  		
+    });
+  })
+
+  $("#sortByRating").click(function() {
+  	$.get("/sortRating", function(response) {
+  		
+    });
+  })
+
 
     //TODO: do whatever you need to do to send message
 
