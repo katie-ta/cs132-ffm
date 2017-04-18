@@ -9,14 +9,14 @@ var http = require('http');
 var bcrypt = require('bcrypt');
 
 var app = express();
-
 var server = http.createServer(app);
-
 var io = require('socket.io').listen(server);
 
 var roomIds = new Set();
 var userIds = new Set();
 var postIds = new Set();
+
+var posts = [];
 
 app.use(express.static(path.join(__dirname, '/css')));
 app.use(express.static(path.join(__dirname, '/imgs')));
@@ -40,7 +40,7 @@ const someOtherPlaintextPassword = 'not_bacon';
 // create message table
 const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
 const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
-const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id TEXT PRIMARY KEY, userId TEXT, title TEXT, description TEXT, createdAt TIMESTAMP, perishable BOOLEAN, type TEXT, servingSize INTEGER, zipcode INTEGER, available, BOOLEAN)';
+const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id TEXT PRIMARY KEY, userId TEXT, title TEXT, description TEXT, createdAt TIMESTAMP, perishable BOOLEAN, type TEXT, zipcode INTEGER, available, BOOLEAN)';
 
 // TODO: create all table schemas and query like below:
 conn.query( createMessageTable , function(error, data){
@@ -72,8 +72,11 @@ function generateRoomIdentifier() {
 // get the home page
 app.get('/', function(request, response) {
 	// TODO: query database for all available posts, default sorted by createdAt column
+	var q = 'SELECT * FROM posts WHERE available == true';
+
 
 	// TODO: when a user wants to re-sort, requery database and order by something else?
+
   response.render('home.html');
 })
 
@@ -84,7 +87,15 @@ app.get('/about', function(request , response) {
 
 app.get('/createpost', function(request , response) {
 	console.log("create post server");
+	// add post to database
+
 	response.render('createpost.html');
+})
+
+app.post('/savepost', function(request, response) {
+	console.log(request);
+	var description = request.body.description;
+	var title = request.body.title;
 })
 
 app.get('/search', function(request, response) {
@@ -101,12 +112,24 @@ app.get('/search', function(request, response) {
 	response.render('search.html');
 })
 
+app.get('/sortNewest', function(request, response) {
+	// use sort-by package by npm
 
-// app.get('/:roomName', function(request, response) {
-//   response.render('room.html', {roomName:  request.params.roomName});
-// });
+	response.render('home.html');
+})
 
-// TODO: create get requests for each page: 
+app.get('/sortClosest', function(request, response) {
+	// use sort-by package by npm
+
+	response.render('home.html');
+})
+
+app.get('/sortRating', function(request, response) {
+	// use sort-by package by npm
+	response.render('home.html');
+})
+
+
 
 // get request for profile.html (for someone's profile)
 app.get('/:userId', function(request, response) {
