@@ -40,7 +40,7 @@ const someOtherPlaintextPassword = 'not_bacon';
 // create message table
 const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
 const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
-const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id TEXT PRIMARY KEY, userId TEXT, title TEXT, description TEXT, createdAt TIMESTAMP, perishable BOOLEAN, type TEXT, zipcode INTEGER, available, BOOLEAN)';
+const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id TEXT PRIMARY KEY, userId TEXT, title TEXT, description TEXT, createdAt TIMESTAMP, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)';
 
 // TODO: create all table schemas and query like below:
 conn.query( createMessageTable , function(error, data){
@@ -134,6 +134,30 @@ app.get('/sortRating', function(request, response) {
 // get request for profile.html (for someone's profile)
 app.get('/:userId', function(request, response) {
 	response.render('profile.html', {userId : request.param.userId});
+
+	var posts = [];
+	var userID = 1; // replace later with actual user id via authentication
+	var availablePosts = conn.query('SELECT * FROM posts WHERE userID=\'' + userID + '\' AND available = 1');
+	availablePosts.on('row', function(request, response){
+
+		var thisTitle = row.title;
+		var thisDescription = row.description;
+		var thisTime = row.createdAt;
+		var thisType = row.type;
+
+		var post = {
+			title: thisTitle,
+			description: thisDescription,
+			time: thisTime,
+			type: thisType
+		}
+		posts.push(post);
+	})
+
+	q.on('end', function(){
+
+		response.json(posts);
+	});
 
 	// TODO: load all posts that belong this person
 	// if the post is active, append it to the active posts div
