@@ -1,0 +1,32 @@
+{
+  "name": "freefoodmovement",
+  "version": "1.0.0",
+  "description": "final term project",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/katie-ta/cs132-ffm.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/katie-ta/cs132-ffm/issues"
+  },
+  "homepage": "https://github.com/katie-ta/cs132-ffm#readme",
+  "dependencies": {
+    "any-db": "^2.2.0",
+    "any-db-sqlite3": "^2.1.4",
+    "any-db-transaction": "^2.2.2",
+    "body-parser": "^1.17.1",
+    "consolidate": "^0.14.5",
+    "express": "^4.15.2",
+    "hogan.js": "^3.0.2",
+    "http": "0.0.0",
+    "path": "^0.12.7",
+    "socket.io": "^1.7.3"
+  }
+}

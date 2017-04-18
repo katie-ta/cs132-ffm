@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head >
+    <meta charset="utf-8">
+    <title>Search</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="search.js"></script>
+    <script type="text/javascript" src="header.js"></script>
+    <link rel="stylesheet" href="main.css" type="text/css" />
+</head>
+    
+  <body>
+        <header>
+        <div id="headerWrapper">
+            <a id="logo"><img id="logo" src="logo.png" alt="logo"></a>
+            <ul>
+                <li><a id="searchheader" href="search.html">Search</a></li>
+                <li><a id="createpost">Create Post</a></li>
+                <li><a id="about">About</a></li>
+                
+            </ul>
+            <div id="personal">
+                <a href="profile.html"><img id="profilePhoto" src="dean.jpg" alt="profile photo"></a>
+                <a href="messages.html"><img id="messageIcon" src="messages.png" alt="envelope icon"></a>
+                </div>
+    </div>
+    </header> 
+            
+    <div class = "container">
+        <h1 style="margin-left:10%;">Search for Posts:</h1>
+        <div id="createPost">
+            <p style="margin:10px;">Searching for something in particular? Use any of the constraints below to narrow down postings!
+            </p>
+        <div class="form-group">
+          <label for="keywords">Keywords</label>
+          <input id="keywords" name="keywords" type="text" class="form-control" >
+        </div>
+
+        <div class="form-group">
+            <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="servesToggle" toggle="dropdown">Number of Servings
+          <span class="caret"></span></button>
+        
+          <ul class="dropdown-menu">
+            <li><a href="#">1-10</a></li>
+            <li><a href="#">10-20</a></li>
+            <li><a href="#">20-30</a></li>
+            <li><a href="#">30+</a></li>
+          </ul>
+        </div>
+
+        </div>
+        
+
+          <div class="form-group">
+             <p>Select one:</p>
+            <label class="radio-inline">
+              <input id="perishable" type="radio" name="optradio">Perishable
+            </label>
+            <label class="radio-inline">
+              <input id="non-perishable" type="radio" name="optradio">Non-perishable
+            </label>
+          </div>
+        
+          <div class="form-group">
+            <p>Select one:</p>
+            <label class="radio-inline">
+              <input id="snack" type="radio" name="optradio">Snack
+            </label>
+            <label class="radio-inline">
+              <input id="produce" type="radio" name="optradio">Produce
+            </label>
+            <label class="radio-inline">
+              <input id="meal" type="radio" name="optradio">Meal
+            </label>
+          </div>
+                 
+          <div class="form-group">
+            <label for="zipcode">Pickup Zipcode</label>
+            <input type="email" class="form-control" aria-describedby="emailHelp">
+          </div>
+
+        <input id="submit-btn" type="submit" class="btn btn-info" value="Submit">
+      </div>
+        </div>
+      
+
+        <div id="footer"> Copyright 2017 FFM Group. All rights reserved.</div>
+
+  </body>
+
+</html>

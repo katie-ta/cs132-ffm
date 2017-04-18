@@ -1,0 +1,390 @@
+body{
+  background-color: #e9ebee;
+  font-family: "nationale-demibold", sans-serif;
+  font-weight: lighter;
+}
+
+.label {
+    font-size: 13px;
+}
+
+.postDescription {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.userInfo {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.zipcode {
+    display: inline-block;
+}
+
+.send-message-form {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+/* -- Nav Bar -- */
+#logo{
+  width: 300px;
+  font-weight: lighter;
+  font-family: "nationale-demibold", sans-serif;
+  padding-top: 10px;
+    padding-bottom: 10px;
+}
+.logo > a {
+  color: white;
+}
+
+#headerWrapper{
+  display:inline-block;
+  width:100%;
+  z-index: 10;
+  background-color: #1F1E00;
+  position:fixed;
+  top:0;
+}
+
+ul {
+    list-style-type: none;
+    display: inline-block;
+}
+
+li {
+    display:inline-block;
+}
+
+li > a {
+    color:#A3912D;
+    color: white;
+    padding: 5px 25px;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: "nationale-demibold", sans-serif;
+    letter-spacing: 3px;
+    font-size: x-large;
+}
+
+li > a:hover {
+    color: rgba(255, 152, 0, 0.66);
+    text-decoration: none;
+}
+
+#messages{
+    display:inline-block;
+}
+
+#personal{
+    display: inline-block;
+    float:right;
+}
+
+#messageIcon{
+    margin-top:40px;
+    margin-right: 20px;
+    float:right;
+    cursor: pointer;
+}
+
+/* Profile Image */
+#profilePhoto{
+    float:right;
+    width: 100px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid #e9ebee;
+    margin-top:20px;
+    margin-right: 20px;
+}
+
+#profilePhotoBig{
+    width: 200px;
+    cursor: pointer;
+    border-radius: 50%;
+    left:0;
+    top:0;
+}
+
+.socMedia{
+    margin-top:10px;
+    margin-left: 25px;
+}
+
+.socialLink{
+    width: 50px;
+    cursor: pointer;
+    border-radius: 20%;
+}
+
+.photoLinks{
+    display: inline-block;
+    margin-right:20px;
+}
+
+.profile{
+    margin-top:15%;
+    margin-left:5%;
+    background-color: white;
+    display: inline-block;
+    padding:20px;
+    margin-bottom: 3%;
+    border: 2px solid #C0C0C0;
+}
+
+.reviewsFeed{
+    margin-bottom:200px;
+}
+
+.review{
+    width:70%;
+    margin-left:5%;
+    background-color: white;
+    padding:20px;
+    margin-bottom: 7px;
+    border: 2px solid #C0C0C0;
+    
+}
+
+#messageIcon{
+    width:80px;
+}
+
+/* ------------- */
+/* -- Nav Bar -- */
+
+/* Container/Top of Posts */
+.container{
+      margin-top: 20%;
+      margin-bottom: 150px;
+     display:inline-block;
+}
+
+#createPost{
+    margin-left:10%;
+    padding:15px;
+    background-color:white;
+    border: 2px solid #C0C0C0;
+    width:60%;
+}
+
+h1{
+    font-size:3em;
+    font-weight: bold;
+}
+
+#aboutUs{
+    width:50%;
+    margin:auto;
+    margin-top:17%;
+}
+
+.pheader{
+  font-size: 50px;
+  color: #495149;
+  float:left;
+  font-weight: bold;
+  margin-left:20%;
+}
+
+.profileContent{
+    display:inline-block;
+}
+
+
+
+
+/* --------Posts-------- */
+.foodPost{
+  background-color: white;
+  color: #495149;
+  border: 2px solid #DCDCDC;
+  height: 180px;
+  padding-top: 25px;
+}
+
+.foodFeed{
+    margin-left:15%;
+}
+
+.postUser{
+    display:inline-block;
+    color:black;
+    margin-right:2%;
+}
+
+.nameStars{
+    display:inline-block;
+}
+
+.username{
+    display:block;
+    font-size:1.2em;
+    color:#1F1E00;
+}
+
+.distance{
+    display:block;
+    font-size:1.2em;
+    color:#1F1E00;
+}
+
+.foodText{
+    display:inline-block;
+    height:100px;
+}
+
+.food{
+  font-size: 30px;
+    font-style: italic;
+    font-weight: bold;
+    color:#1F1E00;
+}
+.description{
+  font-size: 18px;
+    color:#95989A;
+}
+.userPhoto{
+    width: 100px;
+    cursor: pointer;
+    margin-left:20px;
+    border-radius: 50%;
+    display:inline-block;
+}
+
+.stars{
+    width:100px;
+}
+.messageButton{
+    height:45px;
+    float:right;
+    display:inline-block;
+    padding-right: 20px;
+}
+
+/* ------------ Search Bar -------------*/
+#search {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 60px;
+}
+#label {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    z-index: 20;
+}
+#label label {
+    display: block;
+    width: 60px;
+    height: 60px;
+    background: url("../img/search.png") 0 0;
+    font-size: 0;
+    color: rgba(0, 0, 0, 0);
+    text-indent: -9999px;
+    cursor: pointer;
+}
+#label label:hover {
+    background: url("../img/search.png") -60px 0
+}
+
+#label.active label {
+    background: url("../img/search.png") -60px 0
+}
+
+#input {
+    position: absolute;
+    top: 0;
+    left: 60px;
+    width: 450px;
+    height: 60px;
+    z-index: 5;
+    overflow: hidden;
+}
+#input input {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: -450px;
+    width: 450px;
+    height: 100%;
+    margin: 0;
+    padding: 0 10px;
+    border: none;
+    background-color: #23688b;
+    color: #fff;
+    font-size: 18px;
+    backface-visibility: none;
+    border-radius: 0;
+    transition: left 0;
+}
+#input input:focus {
+    outline: none
+}
+#input.focus {
+    z-index: 20
+}
+#input.focus input {
+    left: 0;
+    transition: left 0.3s;
+}
+/* ------------ Messages  -------------*/
+
+.messageBox{
+  background-color: white;
+  color: #495149;
+  border: 2px solid #DCDCDC;
+  height: 180px;
+  padding-top: 25px;
+}
+
+.messageList{
+    margin-left:15%;
+}
+
+
+/* ------------ Search Bar -------------*/
+
+.dropdown-toggle { 
+    font-size: 2em;
+    float:right;
+    margin-left:10%;
+}
+
+#servesToggle{
+    float:left;
+    margin:10px;
+    display: block;
+    font-size:1em;
+}
+
+form{
+    display:block;
+    margin-bottom: 30px;
+}
+
+#sortBy{
+    background-color:white;
+    font-size: 1.3em;
+    float:right;
+    margin-bottom:30px;
+    left:60%;
+    z-index:20;
+}
+
+#footer{
+    width:100%;
+    margin-top:40px;
+    bottom:0;
+    left:0;
+    position:fixed;
+    background-color: #1F1E00;
+    color:rgb(200,200,200);
+    padding:10px;
+    z-index: 100;
+    font-weight: bold;
+}
