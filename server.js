@@ -6,6 +6,7 @@ var path = require('path');
 var hogan = require('hogan.js');
 var begin = require('any-db-transaction');
 var http = require('http');
+var bcrypt = require('bcrypt');
 
 var app = express();
 
@@ -14,6 +15,9 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
 var roomIds = new Set();
+var userIds = new Set();
+var postIds = new Set();
+
 app.use(express.static(path.join(__dirname, '/css')));
 app.use(express.static(path.join(__dirname, '/imgs')));
 
@@ -25,20 +29,31 @@ app.engine('html', engines.hogan); // tell Express to run .html files through Ho
 app.set('views', __dirname + '/pages'); // tell Express where to find templates, in this case the '/pages' directory
 app.set('view engine', 'html'); //register .html extension as template engine so we can render .html pages
 app.use(express.static(__dirname + '/scripts'));
-var conn = anyDB.createConnection('sqlite3://ffm.db');
+
+var conn = anyDB.createConnection('sqlite3://ffm.db'); // create database connection
+
+// stuff to use for bcrypt password encryptions
+const saltRounds = 10;
+const myPlaintextPassword = 's0/\/\P4$$w0rD';
+const someOtherPlaintextPassword = 'not_bacon';
 
 // create message table
-var createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
+const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
+const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
+const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id TEXT PRIMARY KEY, userId TEXT, title TEXT, description TEXT, createdAt TIMESTAMP, perishable BOOLEAN, type TEXT, servingSize INTEGER, zipcode INTEGER, available, BOOLEAN)';
 
 // TODO: create all table schemas and query like below:
-var q = conn.query( createMessageTable , function(error, data){
-  if (error != null) {
-    console.log(error);
-  }
+conn.query( createMessageTable , function(error, data){
+  if (error != null) { console.log(error); }
 });
 
-// TODO: create table for users
-// TODO: create table for posts
+conn.query( createUserTable , function(error, data){
+  if (error != null) { console.log(error); }
+});
+
+conn.query( createPostTable , function(error, data){
+  if (error != null) { console.log(error); }
+});
 
 // create room identifier
 function generateRoomIdentifier() {
@@ -53,14 +68,12 @@ function generateRoomIdentifier() {
   return result;
 }
 
-console.log("here");
 
 // get the home page
 app.get('/', function(request, response) {
-	// TODO: query database for all available posts, default sorted by createdBy column
+	// TODO: query database for all available posts, default sorted by createdAt column
 
-	// TODO: when a user wants to resort, requery database and order by something else?
-
+	// TODO: when a user wants to re-sort, requery database and order by something else?
   response.render('home.html');
 })
 
