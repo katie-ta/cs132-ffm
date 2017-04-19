@@ -78,6 +78,7 @@ app.post('/newLogin', function(request, response) {
 	var instagram = request.body.instagram;
 	var sqlcheck = 'SELECT COUNT(1) FROM users WHERE email = $1';
 	conn.query(sqlcheck, [email], function(error, result) {
+		if (error != null) { console.log(error); }
 		
 	})
 
