@@ -167,7 +167,7 @@ app.get('/login', function(request, response) {
 	sess = request.session;
 	//In this we are assigning email to sess.email variable.
 	//email comes from HTML page.
-	
+
 	response.render("login.html");
 })
 
