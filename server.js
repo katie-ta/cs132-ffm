@@ -201,9 +201,43 @@ app.get('/search', function(request, response) {
 	// TODO:  redirect to search results page (after Yuri makes it)
 
 	// TODO: create foodPost div, insert all information, append it to results div
+	var posts = [];
+	var q = 'SELECT * FROM posts WHERE available == true';
 
+	var query = conn.query(q);
+	query.on('row', function(){
+
+		var post = {
+
+			id: row.id,
+			title: row.title,
+			decription: decription.title
+
+		}
+		posts.push(post);
+
+	});
+
+	var options = {
+	  shouldSort: true,
+	  threshold: 0.6,
+	  location: 0,
+	  distance: 100,
+	  maxPatternLength: 32,
+	  minMatchCharLength: 1,
+	  keys: [
+	    "title",
+	    "author.firstName"
+	]
+	};
+
+	var fuse = new Fuse(posts, options); // "list" is the item array
+	var result = fuse.search("old ma");
+
+	response.json(result);
 	response.render('search.html');
-})
+
+});
 
 app.get('/sortNewest', function(request, response) {
 	// use sort-by package by npm
