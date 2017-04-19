@@ -7,30 +7,42 @@ $(document).ready(function() {
 
     var keywords = $('#keywords').val();
 
+
+    var options {
+        snack: false,
+        produce: false,
+        meal: false, 
+        perishable: false,
+        non-perishable: false
+    }
+
     if($('#snack').is(':checked')) { 
+        options.snack = true;
     	console.log("snack is checked"); 
     }
 
     if($('#produce').is(':checked')) { 
+        options.produce = true;
     	console.log("produce is checked"); 
     }
 
     if($('#meal').is(':checked')) { 
+        options.meal = true;
     	console.log("meal is checked"); 
     }
 
     if($('#perishable').is(':checked')) { 
+        options.perishable = true;
     	console.log("perishable"); 
     }
 
     if($('#non-perishable').is(':checked')) { 
+        options.non-perishable = true;
     	console.log("non-perishable"); 
     }
 
     // then tell server what to search for and which filters!!
-    var options {
 
-    }
 
     // TODO: send get or post (idk which is better) request back to server with information to search on
     $.post("/getSearchResults", options, function(response) {

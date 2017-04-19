@@ -7,17 +7,20 @@ var hogan = require('hogan.js');
 var begin = require('any-db-transaction');
 var http = require('http');
 var bcrypt = require('bcrypt');
+var fuse = require('fuse');
 
 var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 var passport = require('passport')
 var session = require('express-session')
-var LocalStrategy = require('passport-local').Strategy
+const LocalStrategy = require('passport-local').Strategy
 
 var roomIds = new Set();
 var userIds = new Set();
 var postIds = new Set();
+
+var posts = [];
 
 app.use(express.static(path.join(__dirname, '/css')));
 app.use(express.static(path.join(__dirname, '/imgs')));
@@ -44,10 +47,35 @@ const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIM
 const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
 const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)';
 
+<<<<<<< HEAD
 app.use(session({secret: 'freefoodmovementsecretsecretthing'}));
 
 
 // create all table schemas and query like below:
+=======
+// app.use(session({  
+//   store: new RedisStore({
+//     url: config.redisStore.url
+//   }),
+//   secret: config.redisStore.secret,
+//   resave: false,
+//   saveUninitialized: false
+// }))
+app.use(passport.initialize())  
+app.use(passport.session())  
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+
+// TODO: create all table schemas and query like below:
 conn.query( createMessageTable , function(error, data){
   if (error != null) { console.log(error); }
 });
@@ -59,7 +87,6 @@ conn.query( createUserTable , function(error, data){
 conn.query( createPostTable , function(error, data){
   if (error != null) { console.log(error); }
 });
-
 
 var sess;
 
@@ -98,18 +125,61 @@ app.post('/newLogin', function(request, response) {
 
 	      response.json({status: "success"});
 	    });
+app.post('/newLogin', function(request, response) {
+	var name = request.name;
+	var zipcode = request.zipcode;
+	var email = request.email;
+	var facebook = request.facebook;
+	var instagram = request.instagram;
+
+	bcrypt.genSalt(10, function(err, salt) {
+    if (err) return next(err);
+
+    bcrypt.hash(req.body.password, salt, function(err, hash) {
+      if (err) return next(err);
+      // newUser.password = hash; // Or however suits your setup
+
+      // Store the user to the database, then send the response
+      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, 2, $3, $4, $5, $6)';
+      conn.query(sql, [name, hash, zipcode, email. facebook, instagram], function(error, result) {
+      	if (error != null) { console.log(error); }
+      })
+
+      response.json({status: success});
+    });
   });
-
 })
 
-app.get('/login', function(request, response) {
-	sess = request.session;
-	//In this we are assigning email to sess.email variable.
-	//email comes from HTML page.
+app.post('/login', function(request, response) {
+	var email = request.body.email;
+	var password = request.body.password;
 
-	response.render("login.html");
+
+	passport.use(new LocalStrategy(  
+	  function(email, password, done) {
+	    findUser(email, function (err, user) {
+	      var user = null;
+	      var sql = 'SELECT * FROM users WHERE email = $1 AND password =$2'
+	      var q = conn.query(sql, [email, password], function(error, result) {
+	      	user = result.row;
+	      })
+	      if (user != null) {
+	  	      bcrypt.compare(password, user.password, function(err, res) {
+	  		    if (err) return done(err);
+	  		    if (res === false) {
+	  		      return done(null, false);
+	  		    } else {
+	  		      return done(null, user);
+	  		    }
+	  		  });
+	      } else {
+	      	return done(null, false);
+	      }
+	      
+	    })
+	  }
+	))
 })
-
 app.post('/checkLogin', function(request, response) {
 	sess = request.session;
 	var email = request.body.email;
@@ -166,7 +236,6 @@ app.post('/savepost', function(request, response) {
 	var title = request.body.title;
 	var createdAt = request.body.createdAt;
 	var zipcode = request.body.zipcode;
-	var available = true;
   console.log(description);
   console.log(title);
   console.log(createdAt);
@@ -192,7 +261,7 @@ app.get('/search', function(request, response) {
 	// TODO: create foodPost div, insert all information, append it to results div
 	var posts = [];
 	var searchOptions = request.body.options;
-	var q = 'SELECT * FROM posts WHERE available == true';
+	var q = 'SELECT * FROM posts WHERE available == true AND searchOptions.';
 
 	var query = conn.query(q);
 	query.on('row', function(){
@@ -270,7 +339,7 @@ app.get('/profile/posts', function(request, response) {
   	var thisType = row.type;
 
 		var post = {
-      		id: thisId,
+      id: thisId,
 			title: thisTitle,
 			description: thisDescription,
 			time: thisTime,
