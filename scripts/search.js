@@ -28,8 +28,13 @@ $(document).ready(function() {
     }
 
     // then tell server what to search for and which filters!!
+    var options {
+
+    }
 
     // TODO: send get or post (idk which is better) request back to server with information to search on
-
+    $.post("/getSearchResults", options, function(response) {
+        // parse the response which contains all the posts filtered
+    })
   }
 });

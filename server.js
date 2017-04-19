@@ -43,19 +43,29 @@ const someOtherPlaintextPassword = 'not_bacon';
 
 // create message table
 const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
-const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
-const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userId TEXT, title TEXT, description TEXT, createdAt TIMESTAMP, perishable BOOLEAN, type TEXT, zipcode INTEGER, available, BOOLEAN)';
+const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
+const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)';
 
-app.use(session({  
-  store: new RedisStore({
-    url: config.redisStore.url
-  }),
-  secret: config.redisStore.secret,
-  resave: false,
-  saveUninitialized: false
-}))
+// app.use(session({  
+//   store: new RedisStore({
+//     url: config.redisStore.url
+//   }),
+//   secret: config.redisStore.secret,
+//   resave: false,
+//   saveUninitialized: false
+// }))
 app.use(passport.initialize())  
 app.use(passport.session())  
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
 
 
 // TODO: create all table schemas and query like below:
@@ -72,15 +82,26 @@ conn.query( createPostTable , function(error, data){
 });
 
 app.post('/newLogin', function(request, response) {
+	var name = request.name;
+	var zipcode = request.zipcode;
+	var email = request.email;
+	var facebook = request.facebook;
+	var instagram = request.instagram;
+
 	bcrypt.genSalt(10, function(err, salt) {
     if (err) return next(err);
 
     bcrypt.hash(req.body.password, salt, function(err, hash) {
       if (err) return next(err);
-      newUser.password = hash; // Or however suits your setup
-      // Store the user to the database, then send the response
-      var sql = 'INSERT '
+      // newUser.password = hash; // Or however suits your setup
 
+      // Store the user to the database, then send the response
+      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, 2, $3, $4, $5, $6)';
+      conn.query(sql, [name, hash, zipcode, email. facebook, instagram], function(error, result) {
+      	if (error != null) { console.log(error); }
+      })
+
+      response.json({status: success});
     });
   });
 })
@@ -89,28 +110,31 @@ app.post('/login', function(request, response) {
 	var email = request.body.email;
 	var password = request.body.password;
 
-	passport.use(new LocalStrategy(  
-  function(email, password, done) {
-    findUser(email, function (err, user) {
-      var user = null;
-      var sql = 'SELECT * FROM users WHERE email = $1 AND password =$2'
-      var q = conn.query(sql, [email, password], function(error, result) {
-      	user = result.row;
-      })
-      if (err) {
-        return done(err)
-      }
-      if (!user) {
-        return done(null, false)
-      }
-      if (password !== user.password  ) {
-        return done(null, false)
-      }
 
-      return done(null, user)
-    })
-  }
-))
+	passport.use(new LocalStrategy(  
+	  function(email, password, done) {
+	    findUser(email, function (err, user) {
+	      var user = null;
+	      var sql = 'SELECT * FROM users WHERE email = $1 AND password =$2'
+	      var q = conn.query(sql, [email, password], function(error, result) {
+	      	user = result.row;
+	      })
+	      if (user != null) {
+	  	      bcrypt.compare(password, user.password, function(err, res) {
+	  		    if (err) return done(err);
+	  		    if (res === false) {
+	  		      return done(null, false);
+	  		    } else {
+	  		      return done(null, user);
+	  		    }
+	  		  });
+	      } else {
+	      	return done(null, false);
+	      }
+	      
+	    })
+	  }
+	))
 })
 
 
@@ -142,21 +166,29 @@ app.get('/', function(request, response) {
 })
 
 app.get('/about', function(request , response) {
-	console.log("about server");
 	response.render('about.html');
 })
 
 app.get('/createpost', function(request , response) {
-	console.log("create post server");
-	// add post to database
-
 	response.render('createpost.html');
 })
 
 app.post('/savepost', function(request, response) {
-	console.log(request);
 	var description = request.body.description;
 	var title = request.body.title;
+	var createdAt = request.body.createdAt;
+	var zipcode = request.body.zipcode;
+  console.log(description);
+  console.log(title);
+  console.log(createdAt);
+  console.log(zipcode);
+  var sql = 'INSERT INTO posts(userId, title, description, createdAt, servingSize, perishable, type, zipcode, available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+  conn.query(q, [request.user.id,  title, description, createdAt, servingSize, perishable, type, zipcode, available], function(error, result) {
+        if (error != null) { console.log(error); }
+      });
+  // posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, 
+  // servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)
+
 })
 
 app.get('/search', function(request, response) {
@@ -188,17 +220,52 @@ app.get('/sortClosest', function(request, response) {
 app.get('/sortRating', function(request, response) {
 	// use sort-by package by npm
 	response.render('home.html');
+
+})
+
+app.get('/profile', function(request, response) {
+  response.render('profile.html');
 })
 
 
 
 // get request for profile.html (for someone's profile)
-app.get('/:userId', function(request, response) {
-	response.render('profile.html', {userId : request.param.userId});
+app.get('/profile/posts', function(request, response) {
+	var user = request.user;
+	var posts = [];
+	var userID = 1; // replace later with actual user id via authentication
+	var sql = 'SELECT * FROM posts WHERE userId == $1 AND available == true'
+	var availablePosts = conn.query(sql, [user.id]);
+	availablePosts.on('row', function(request, response){
+    var thisId = row.id;
+  	var thisTitle = row.title;
+  	var thisDescription = row.description;
+  	var thisTime = row.createdAt;
+  	var thisType = row.type;
+
+		var post = {
+      id: thisId,
+			title: thisTitle,
+			description: thisDescription,
+			time: thisTime,
+			type: thisType
+		}
+
+		  posts.push(post);
+		})
+
+	q.on('end', function(){
+	 response.json(posts);
+	});
+
+	
+
 
 	// TODO: load all posts that belong this person
 	// if the post is active, append it to the active posts div
 	// TODO: add "active posts div"
+
+
 
 	// if the post is inactive, append it to previous posts div
 	// TODO: get rid of reviews div, add previous posts div (which should be the same styling

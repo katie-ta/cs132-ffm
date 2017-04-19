@@ -18,7 +18,7 @@
         <div id="headerWrapper">
             <a id="logo"><img id="logo" src="logo.png" alt="logo"></a>
             <ul>
-                <li><a id="searchheader" href="search.html">Search</a></li>
+                <li><a id="searchheader">Search</a></li>
                 <li><a id="createpost">Create Post</a></li>
                 <li><a id="about">About</a></li>
                 
@@ -41,7 +41,7 @@
           </div>
         </form>
             
-        <div class="dropdown">
+        <!-- <div class="dropdown">
           <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" id="servesToggle">Number of Servings
           <span class="caret"></span></button>
           <ul class="dropdown-menu">
@@ -50,24 +50,26 @@
             <li><a href="#">20-30</a></li>
             <li><a href="#">30+</a></li>
           </ul>
-        </div>
+        </div> -->
+        <form>
+              <p>How many people can your food serve?</p>
+              <input class="form-control" type="number" value="1" id="servingSize">
+          </form>
+        
 
           <form>
-            <div class="form-group row">
-              <p>Select one:</p>
+              <p>Perishable?</p>
             <label class="radio-inline">
               <input id="perishable" type="radio" name="optradio">Perishable
             </label>
             <label class="radio-inline">
               <input id="non-perishable" type="radio" name="optradio">Non-perishable
             </label>
-            </div>
-             
           </form>
         
           <form>
 
-            <p>Select one:</p>
+            <p>Type of food?</p>
             <label class="radio-inline">
               <input id="snack" type="radio" name="optradio">Snack
             </label>
@@ -78,6 +80,7 @@
               <input id="meal" type="radio" name="optradio">Meal
             </label>
           </form>
+
                     
         <form>
           <div class="form-group">
