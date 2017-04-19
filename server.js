@@ -44,76 +44,10 @@ const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIM
 const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
 const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)';
 
-// app.use(session({  
-//   store: new RedisStore({
-//     url: config.redisStore.url
-//   }),
-//   secret: config.redisStore.secret,
-//   resave: false,
-//   saveUninitialized: false
-// }))
 app.use(session({secret: 'freefoodmovementsecretsecretthing'}));
-// app.use(passport.initialize())  
-// app.use(passport.session())  
-
-// passport.serializeUser(function(user, done) {
-//   done(null, user.id);
-// });
-
-// passport.deserializeUser(function(id, done) {
-//   // User.findById(id, function(err, user) {
-//   //   done(err, user);
-//   // });
-// });
-
-// passport.use('local-login', new LocalStrategy(
-// 	{
-//         // by default, local strategy uses username and password, we will override with email
-//         usernameField : 'email',
-//         passwordField : 'password',
-//         passReqToCallback : true // allows us to pass back the entire request to the callback
-//     },
-// 	  function(email, password, done) {
-// 	  	console.log("checking login");
-// 	  	console.log("email " + email);
-// 	  	console.log(email);
-// 	    findUser(email, function (err, user) {
-// 	      var user = null;
-// 	      console.log("email " + email);
-// 	      var sql = 'SELECT user FROM users WHERE email = $1'
-// 	      conn.query(sql, [email], function(error, result) {
-// 	      	user = user.row;
-// 	      	console.log(user);
-// 	      	var hash = user.password;
-// 	      	console.log(hash);
-
-// 	      	bcrypt.compare(password, hash, function(err, res) {
-// 	      	    // res == true 
-// 	      	    console.log(password);
-// 	      	    console.log(hash);
-//       	        if (user != null) {
-//       	    	      bcrypt.compare(password, user.password, function(err, res) {
-//       	    		    if (err) return done(err);
-//       	    		    if (res === false) {
-//       	    		      return done(null, false);
-//       	    		    } else {
-//       	    		      return done(null, user);
-//       	    		    }
-//       	    		  });
-//       	        } else {
-//       	        	response.json({status: "success"});
-//       	        	return done(null, false);
-//       	        }
-// 	      	});
-// 	      })
-	      
-	      
-// 	    })
-// 	  }
-// 	))
 
 
-// TODO: create all table schemas and query like below:
+// create all table schemas and query like below:
 conn.query( createMessageTable , function(error, data){
   if (error != null) { console.log(error); }
 });
@@ -125,6 +59,7 @@ conn.query( createUserTable , function(error, data){
 conn.query( createPostTable , function(error, data){
   if (error != null) { console.log(error); }
 });
+
 
 var sess;
 
@@ -141,24 +76,27 @@ app.post('/newLogin', function(request, response) {
 	var email = request.body.email;
 	var facebook = 	request.body.facebook;
 	var instagram = request.body.instagram;
-	console.log(name);
-
+	var sqlcheck = 'SELECT COUNT(1) FROM users WHERE email = $1';
+	conn.query(sqlcheck, [email], function(error, result) {
+		
+	})
 
 	bcrypt.genSalt(10, function(err, salt) {
     if (err) return next(err);
+	    bcrypt.hash(request.body.password, salt, function(err, hash) {
+	      if (err) return next(err);
+	      // newUser.password = hash; // Or however suits your setup
 
-    bcrypt.hash(request.body.password, salt, function(err, hash) {
-      if (err) return next(err);
-      // newUser.password = hash; // Or however suits your setup
+	      // Store the user to the database, then send the response
+	      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, $2, $3, $4, $5, $6)';
+	      conn.query(sql, [name, hash, zipcode, email, facebook, instagram], function(error, result) {
+	      	if (error != null) { console.log(error); }
+	      	request.session.email = email;
+	      	console.log(request.session.email);
+	      })
 
-      // Store the user to the database, then send the response
-      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, $2, $3, $4, $5, $6)';
-      conn.query(sql, [name, hash, zipcode, email, facebook, instagram], function(error, result) {
-      	if (error != null) { console.log(error); }
-      })
-
-      response.json({status: "success"});
-    });
+	      response.json({status: "success"});
+	    });
   });
 
 })
@@ -171,26 +109,21 @@ app.get('/login', function(request, response) {
 	response.render("login.html");
 })
 
-app.post('/checkLogin', passport.authenticate('local-login', {
-    successRedirect : '/', // redirect to the secure profile section
-    failureRedirect : '/login', // redirect back to the signup page if there is an error
-   }));
-
-// app.post('/checkLogin', function(request, response) {
-// 	// console.log(request);
-// 	var email = request.body.email;
-// 	var password = request.body.password;
-// 	console.log("checking login");
-// 	console.log("email: " + email);
-// 	console.log("password: " + password);
-
-
-// })
-
-
-
-
-
+app.post('/checkLogin', function(request, response) {
+	sess = request.session;
+	var email = request.body.email;
+	var password = request.body.password;
+	// Load hash from your password DB. 
+	var sql = 'SELECT password FROM users where email = $1'
+	conn.query(sql, [email], function(error, result) {
+		if(error!= null) { console.log(error); }
+		console.log(result.row);
+		bcrypt.compare(password, hash, function(err, res) {
+	    // res == true 
+	});
+	})
+	
+});
 
 // create room identifier
 function generateRoomIdentifier() {
@@ -288,7 +221,7 @@ app.get('/search', function(request, response) {
 	};
 
 	// var fuse = new Fuse(posts, options); // "list" is the item array
-	var result = fuse.search("old ma");
+	// var result = fuse.search("old ma");
 
 	response.json(result);
 	response.render('search.html');
