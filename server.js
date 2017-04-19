@@ -206,7 +206,7 @@ app.get('/search', function(request, response) {
 	// TODO: create foodPost div, insert all information, append it to results div
 	var posts = [];
 	var searchOptions = request.body.options;
-	var q = 'SELECT * FROM posts WHERE available == true';
+	var q = 'SELECT * FROM posts WHERE available == true AND searchOptions.';
 
 	var query = conn.query(q);
 	query.on('row', function(){
