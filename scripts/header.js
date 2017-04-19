@@ -1,4 +1,6 @@
 $(document).ready(function() {
+	var userId = null;
+
 	$('#about').on("click", function() {
 		console.log("aboutttt");
 		$.get("/about", function(response) {
@@ -24,7 +26,7 @@ $(document).ready(function() {
 
 	$('#profileheader').on("click", function() {
 		console.log("profile client side");
-		window.location = "/:userId"; 
+		window.location = "/profile/posts";
 	})
 
 	$('#searchheader').on("click", function() {

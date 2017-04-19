@@ -10,6 +10,7 @@ $(document).ready(function() {
     var description = $('#description').val();
     var type = "";
     var perishable = false;
+    var servingSize = $('#servingSize').val();
 
     if($('#snack').is(':checked')) { 
         type = "snack";
@@ -32,17 +33,18 @@ $(document).ready(function() {
         perishable = false;
     }
 
+
+
     // get/make timestamp
     // note : TIMESTAMP in sql is stored as YYYY-MM-DD HH:MM:SS (non utc, I think)
     var dt = new Date($.now());
     console.log("dt : " + dt);
     var timestamp = dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDay() + " " +  dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
-    var response = {title: postTitle, description: description, zipcode: zipcode, createdAt: timestamp, perishable: perishable, type: type, available: true};
+    var response = {title: postTitle, description: description, zipcode: zipcode, createdAt: timestamp, servingSize: servingSize, perishable: perishable, type: type, available: true};
     console.log(response);
 
     $.post("/savePost", response , function(res) {
         //TODO: send back all data to be inserted into database
-        //TODO: make sure all column info are included
         //you might want to add callback function that is executed post request success
             if (res.status == "success") {
                 console.log("successfully saved message");
