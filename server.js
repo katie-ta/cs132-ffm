@@ -13,13 +13,11 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 var passport = require('passport')
 var session = require('express-session')
-const LocalStrategy = require('passport-local').Strategy
+var LocalStrategy = require('passport-local').Strategy
 
 var roomIds = new Set();
 var userIds = new Set();
 var postIds = new Set();
-
-var posts = [];
 
 app.use(express.static(path.join(__dirname, '/css')));
 app.use(express.static(path.join(__dirname, '/imgs')));
@@ -54,18 +52,65 @@ const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KE
 //   resave: false,
 //   saveUninitialized: false
 // }))
-app.use(passport.initialize())  
-app.use(passport.session())  
+app.use(session({secret: 'freefoodmovementsecretsecretthing'}));
+// app.use(passport.initialize())  
+// app.use(passport.session())  
 
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
+// passport.serializeUser(function(user, done) {
+//   done(null, user.id);
+// });
 
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
+// passport.deserializeUser(function(id, done) {
+//   // User.findById(id, function(err, user) {
+//   //   done(err, user);
+//   // });
+// });
+
+// passport.use('local-login', new LocalStrategy(
+// 	{
+//         // by default, local strategy uses username and password, we will override with email
+//         usernameField : 'email',
+//         passwordField : 'password',
+//         passReqToCallback : true // allows us to pass back the entire request to the callback
+//     },
+// 	  function(email, password, done) {
+// 	  	console.log("checking login");
+// 	  	console.log("email " + email);
+// 	  	console.log(email);
+// 	    findUser(email, function (err, user) {
+// 	      var user = null;
+// 	      console.log("email " + email);
+// 	      var sql = 'SELECT user FROM users WHERE email = $1'
+// 	      conn.query(sql, [email], function(error, result) {
+// 	      	user = user.row;
+// 	      	console.log(user);
+// 	      	var hash = user.password;
+// 	      	console.log(hash);
+
+// 	      	bcrypt.compare(password, hash, function(err, res) {
+// 	      	    // res == true 
+// 	      	    console.log(password);
+// 	      	    console.log(hash);
+//       	        if (user != null) {
+//       	    	      bcrypt.compare(password, user.password, function(err, res) {
+//       	    		    if (err) return done(err);
+//       	    		    if (res === false) {
+//       	    		      return done(null, false);
+//       	    		    } else {
+//       	    		      return done(null, user);
+//       	    		    }
+//       	    		  });
+//       	        } else {
+//       	        	response.json({status: "success"});
+//       	        	return done(null, false);
+//       	        }
+// 	      	});
+// 	      })
+	      
+	      
+// 	    })
+// 	  }
+// 	))
 
 
 // TODO: create all table schemas and query like below:
@@ -81,61 +126,68 @@ conn.query( createPostTable , function(error, data){
   if (error != null) { console.log(error); }
 });
 
+var sess;
+
+app.get('/register', function(request, response) {
+	sess = request.session;
+	console.log(sess);
+	response.render('register.html');
+})
+
 app.post('/newLogin', function(request, response) {
-	var name = request.name;
-	var zipcode = request.zipcode;
-	var email = request.email;
-	var facebook = request.facebook;
-	var instagram = request.instagram;
+	console.log("newlogin!!");
+	var name = request.body.name;
+	var zipcode = request.body.zipcode;
+	var email = request.body.email;
+	var facebook = 	request.body.facebook;
+	var instagram = request.body.instagram;
+	console.log(name);
+
 
 	bcrypt.genSalt(10, function(err, salt) {
     if (err) return next(err);
 
-    bcrypt.hash(req.body.password, salt, function(err, hash) {
+    bcrypt.hash(request.body.password, salt, function(err, hash) {
       if (err) return next(err);
       // newUser.password = hash; // Or however suits your setup
 
       // Store the user to the database, then send the response
-      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, 2, $3, $4, $5, $6)';
-      conn.query(sql, [name, hash, zipcode, email. facebook, instagram], function(error, result) {
+      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, $2, $3, $4, $5, $6)';
+      conn.query(sql, [name, hash, zipcode, email, facebook, instagram], function(error, result) {
       	if (error != null) { console.log(error); }
       })
 
-      response.json({status: success});
+      response.json({status: "success"});
     });
   });
+
 })
 
-app.post('/login', function(request, response) {
-	var email = request.body.email;
-	var password = request.body.password;
-
-
-	passport.use(new LocalStrategy(  
-	  function(email, password, done) {
-	    findUser(email, function (err, user) {
-	      var user = null;
-	      var sql = 'SELECT * FROM users WHERE email = $1 AND password =$2'
-	      var q = conn.query(sql, [email, password], function(error, result) {
-	      	user = result.row;
-	      })
-	      if (user != null) {
-	  	      bcrypt.compare(password, user.password, function(err, res) {
-	  		    if (err) return done(err);
-	  		    if (res === false) {
-	  		      return done(null, false);
-	  		    } else {
-	  		      return done(null, user);
-	  		    }
-	  		  });
-	      } else {
-	      	return done(null, false);
-	      }
-	      
-	    })
-	  }
-	))
+app.get('/login', function(request, response) {
+	sess = request.session;
+	//In this we are assigning email to sess.email variable.
+	//email comes from HTML page.
+	
+	response.render("login.html");
 })
+
+app.post('/checkLogin', passport.authenticate('local-login', {
+    successRedirect : '/', // redirect to the secure profile section
+    failureRedirect : '/login', // redirect back to the signup page if there is an error
+   }));
+
+// app.post('/checkLogin', function(request, response) {
+// 	// console.log(request);
+// 	var email = request.body.email;
+// 	var password = request.body.password;
+// 	console.log("checking login");
+// 	console.log("email: " + email);
+// 	console.log("password: " + password);
+
+
+// })
+
+
 
 
 
@@ -178,6 +230,7 @@ app.post('/savepost', function(request, response) {
 	var title = request.body.title;
 	var createdAt = request.body.createdAt;
 	var zipcode = request.body.zipcode;
+	var available = true;
   console.log(description);
   console.log(title);
   console.log(createdAt);
@@ -231,7 +284,7 @@ app.get('/search', function(request, response) {
 	]
 	};
 
-	var fuse = new Fuse(posts, options); // "list" is the item array
+	// var fuse = new Fuse(posts, options); // "list" is the item array
 	var result = fuse.search("old ma");
 
 	response.json(result);
@@ -278,7 +331,7 @@ app.get('/profile/posts', function(request, response) {
   	var thisType = row.type;
 
 		var post = {
-      id: thisId,
+      		id: thisId,
 			title: thisTitle,
 			description: thisDescription,
 			time: thisTime,
