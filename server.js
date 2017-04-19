@@ -43,6 +43,7 @@ const someOtherPlaintextPassword = 'not_bacon';
 
 // create message table
 const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
+<<<<<<< Updated upstream
 const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
 const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)';
 
@@ -67,6 +68,10 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+=======
+const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
+const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id TEXT PRIMARY KEY, userId TEXT, title TEXT, description TEXT, createdAt TIMESTAMP, perishable BOOLEAN, type TEXT, servingSize INTEGER, zipcode INTEGER, available BOOLEAN)';
+>>>>>>> Stashed changes
 
 // TODO: create all table schemas and query like below:
 conn.query( createMessageTable , function(error, data){
@@ -169,7 +174,12 @@ app.get('/about', function(request , response) {
 	response.render('about.html');
 })
 
+<<<<<<< Updated upstream
 app.get('/createpost', function(request , response) {
+=======
+app.get('/createpost', function(request) {
+	console.log("create post server");
+>>>>>>> Stashed changes
 	response.render('createpost.html');
 })
 
@@ -193,7 +203,7 @@ app.post('/savepost', function(request, response) {
 
 app.get('/search', function(request, response) {
 	// catches the search form stuff
-	// TODO: get search information 
+	// TODO: get search information
 	// run some sort of search algorithm on all of the posts
 
 	// TODO : look for some sort of search api that will work? OR manually search all posts?
@@ -263,6 +273,10 @@ app.get('/profile', function(request, response) {
 })
 
 
+<<<<<<< Updated upstream
+=======
+// TODO: create get requests for each page:
+>>>>>>> Stashed changes
 
 // get request for profile.html (for someone's profile)
 app.get('/profile/posts', function(request, response) {
@@ -316,7 +330,3 @@ app.get('/profile/posts', function(request, response) {
 server.listen(8080, function() {
   console.log("Listening on port 8080");
 });
-
-
-
-
