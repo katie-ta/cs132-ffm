@@ -26,6 +26,7 @@
     "consolidate": "^0.14.5",
     "express": "^4.15.2",
     "express-session": "^1.15.2",
+    "fuse": "^0.4.0",
     "hogan.js": "^3.0.2",
     "http": "0.0.0",
     "passport": "^0.3.2",

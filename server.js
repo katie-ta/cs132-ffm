@@ -7,6 +7,7 @@ var hogan = require('hogan.js');
 var begin = require('any-db-transaction');
 var http = require('http');
 var bcrypt = require('bcrypt');
+var fuse = require('fuse');
 
 var app = express();
 var server = http.createServer(app);
