@@ -11,6 +11,9 @@ var bcrypt = require('bcrypt');
 var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
+var passport = require('passport')
+var session = require('express-session')
+const LocalStrategy = require('passport-local').Strategy
 
 var roomIds = new Set();
 var userIds = new Set();
@@ -32,6 +35,7 @@ app.use(express.static(__dirname + '/scripts'));
 
 var conn = anyDB.createConnection('sqlite3://ffm.db'); // create database connection
 
+
 // stuff to use for bcrypt password encryptions
 const saltRounds = 10;
 const myPlaintextPassword = 's0/\/\P4$$w0rD';
@@ -39,8 +43,20 @@ const someOtherPlaintextPassword = 'not_bacon';
 
 // create message table
 const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
-const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
-const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id TEXT PRIMARY KEY, userId TEXT, title TEXT, description TEXT, createdAt TIMESTAMP, perishable BOOLEAN, type TEXT, zipcode INTEGER, available, BOOLEAN)';
+const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
+const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userId TEXT, title TEXT, description TEXT, createdAt TIMESTAMP, perishable BOOLEAN, type TEXT, zipcode INTEGER, available, BOOLEAN)';
+
+app.use(session({  
+  store: new RedisStore({
+    url: config.redisStore.url
+  }),
+  secret: config.redisStore.secret,
+  resave: false,
+  saveUninitialized: false
+}))
+app.use(passport.initialize())  
+app.use(passport.session())  
+
 
 // TODO: create all table schemas and query like below:
 conn.query( createMessageTable , function(error, data){
@@ -54,6 +70,51 @@ conn.query( createUserTable , function(error, data){
 conn.query( createPostTable , function(error, data){
   if (error != null) { console.log(error); }
 });
+
+app.post('/newLogin', function(request, response) {
+	bcrypt.genSalt(10, function(err, salt) {
+    if (err) return next(err);
+
+    bcrypt.hash(req.body.password, salt, function(err, hash) {
+      if (err) return next(err);
+      newUser.password = hash; // Or however suits your setup
+      // Store the user to the database, then send the response
+      var sql = 'INSERT '
+
+    });
+  });
+})
+
+app.post('/login', function(request, response) {
+	var email = request.body.email;
+	var password = request.body.password;
+
+	passport.use(new LocalStrategy(  
+  function(email, password, done) {
+    findUser(email, function (err, user) {
+      var user = null;
+      var sql = 'SELECT * FROM users WHERE email = $1 AND password =$2'
+      var q = conn.query(sql, [email, password], function(error, result) {
+      	user = result.row;
+      })
+      if (err) {
+        return done(err)
+      }
+      if (!user) {
+        return done(null, false)
+      }
+      if (password !== user.password  ) {
+        return done(null, false)
+      }
+
+      return done(null, user)
+    })
+  }
+))
+})
+
+
+
 
 // create room identifier
 function generateRoomIdentifier() {

@@ -1,4 +1,6 @@
 $(document).ready(function() {
+	var userId = null;
+	
 	$('#about').on("click", function() {
 		console.log("aboutttt");
 		$.get("/about", function(response) {
