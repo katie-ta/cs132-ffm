@@ -221,7 +221,9 @@ app.get('/about', function(request , response) {
 	response.render('about.html');
 })
 
-app.get('/createpost', function(request , response) {
+
+app.get('/createpost', function(request) {
+	console.log("create post server");
 	response.render('createpost.html');
 })
 
@@ -246,7 +248,7 @@ app.post('/savepost', function(request, response) {
 
 app.get('/search', function(request, response) {
 	// catches the search form stuff
-	// TODO: get search information 
+	// TODO: get search information
 	// run some sort of search algorithm on all of the posts
 
 	// TODO : look for some sort of search api that will work? OR manually search all posts?
@@ -255,6 +257,7 @@ app.get('/search', function(request, response) {
 
 	// TODO: create foodPost div, insert all information, append it to results div
 	var posts = [];
+	var searchOptions = request.body.options;
 	var q = 'SELECT * FROM posts WHERE available == true';
 
 	var query = conn.query(q);
@@ -316,6 +319,8 @@ app.get('/profile', function(request, response) {
 
 
 
+// TODO: create get requests for each page:
+
 // get request for profile.html (for someone's profile)
 app.get('/profile/posts', function(request, response) {
 	var user = request.user;
@@ -368,7 +373,3 @@ app.get('/profile/posts', function(request, response) {
 server.listen(8080, function() {
   console.log("Listening on port 8080");
 });
-
-
-
-
