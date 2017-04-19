@@ -82,6 +82,18 @@ li > a:hover {
     float:right;
 }
 
+#signin{
+    background-color: #1F1E00;
+}
+
+#home-img{
+    display:block;
+    margin:auto;
+    width:70%;
+    padding-top: 10%;
+    
+}
+
 #messageIcon{
     margin-top:40px;
     margin-right: 20px;
@@ -387,4 +399,95 @@ form{
     padding:10px;
     z-index: 100;
     font-weight: bold;
+}
+
+.sign-btn{
+    font-size:2em;
+    background-color:#A3912D;
+    margin-right:40px;
+}
+
+.sign-btn:hover{
+    background-color:#63581c;
+    text-decoration: none;
+}
+
+.btn-container{
+    margin-left:35%;
+    margin-top:30px;
+}
+
+
+
+#login-page{
+    background-color:#1F1E00;
+}
+
+.form-group{
+    width:50%;
+}
+
+.socmedia-links{
+    width:90%;
+}
+
+.socmedia{
+    margin-bottom: 40px;
+}
+
+.log-container{
+    padding:20px;
+    padding-bottom: 20px;
+    background-color:#e9ebee;.
+    margin-bottom:70px;
+}
+
+.page-container{
+    width:70%;
+    margin:auto;
+    margin-top:15%;  
+    margin-bottom: 60px;
+}
+
+#upload-btn{
+    position:relative;
+}
+
+.upload-container{
+    margin-top:20px;
+    margin-bottom: 30px;
+}
+
+#upload-instructions{
+    display: inline;
+    margin-right: 10px;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.basic-info{
+    margin-bottom: 40px;
+}
+
+#medialink-instruct{
+    font-weight:bold; 
+    color:#63581c; 
+    font-size:1.4em;
+}
+
+#create-btn{
+    display:block;
+    margin:auto;
+}
+
+.login{
+    display:block;
+    margin:auto;
+    font-weight: bold;
+}
+
+.login-cont{
+    width:30%;
+    display:block;
+    margin:auto;
 }

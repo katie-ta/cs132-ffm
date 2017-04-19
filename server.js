@@ -81,7 +81,6 @@ app.get('/', function(request, response) {
 })
 
 app.get('/about', function(request , response) {
-	console.log("about server");
 	response.render('about.html');
 })
 
