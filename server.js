@@ -259,25 +259,28 @@ app.get('/search', function(request, response) {
 	// TODO:  redirect to search results page (after Yuri makes it)
 
 	// TODO: create foodPost div, insert all information, append it to results div
-	var posts = [];
-	var searchOptions = request.body.options;
-	var q = 'SELECT * FROM posts WHERE available == true AND searchOptions.';
 
-	var query = conn.query(q);
-	query.on('row', function(){
+	var posts = []; // list of all applicable posts
+	var searchOptions = request.body.options;// list of all search options sent over from client-side
 
-		var post = {
+	var q = ('SELECT * FROM posts WHERE available == true AND perishable == ' + searchOptions.perishable + 'AND snack== ' + 
+				searchOptions.snack + 'AND meal == ' + searchOptions.meal + ' AND produce ==' + searchOptions.produce); // SQL query
 
-			id: row.id,
+	var query = conn.query(q);// execute query
+	query.on('row', function(){ // iterate through all rows - I think this is how its done
+
+		var post = { // create post JSON objects for each post because fuse.js accepts JSON objects as parameters
+
+			id: row.id, // assignments
 			title: row.title,
-			decription: decription.title
+			decription: row.description
 
 		}
-		posts.push(post);
+		posts.push(post); // push all post elements into posts
 
 	});
 
-	var options = {
+	var options = { // list of options that need to be provided to fuse.js for search to occur
 	  shouldSort: true,
 	  threshold: 0.6,
 	  location: 0,
@@ -285,15 +288,15 @@ app.get('/search', function(request, response) {
 	  maxPatternLength: 32,
 	  minMatchCharLength: 1,
 	  keys: [
-	    "title",
-	    "author.firstName"
+	    "title", // the keys that are searched
+	    "decription"
 	]
 	};
 
-	// var fuse = new Fuse(posts, options); // "list" is the item array
-	// var result = fuse.search("old ma");
+	var fuse = new Fuse(posts, options); // "list" is the item array
+	var result = fuse.search(searchOptions.keywords); // search is conducted and result should be all matching json objects
 
-	response.json(result);
+	response.json(result); // results should be sent back as a response
 	response.render('search.html');
 
 });

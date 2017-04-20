@@ -9,6 +9,7 @@ $(document).ready(function() {
 
 
     var options {
+        keyword : keywords,
         snack: false,
         produce: false,
         meal: false, 
@@ -46,6 +47,13 @@ $(document).ready(function() {
 
     // TODO: send get or post (idk which is better) request back to server with information to search on
     $.post("/getSearchResults", options, function(response) {
+
+        if(response.status == success){
+
+            var resultsJSON = response.json();
+        }
+
+
         // parse the response which contains all the posts filtered
     })
   }
