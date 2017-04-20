@@ -8,42 +8,42 @@ $(document).ready(function() {
     var keywords = $('#keywords').val();
 
 
-    var options {
+    var options  = {
         keyword : keywords,
-        snack: false,
-        produce: false,
-        meal: false, 
-        perishable: false,
-        non-perishable: false
+        type: "null", 
+        perishable: 0,
+        nonPerishable: 0
     }
 
     if($('#snack').is(':checked')) { 
-        options.snack = true;
+        options.type = "snack";
     	console.log("snack is checked"); 
     }
 
     if($('#produce').is(':checked')) { 
-        options.produce = true;
+        options.type = "produce";
     	console.log("produce is checked"); 
     }
 
     if($('#meal').is(':checked')) { 
-        options.meal = true;
+        options.type = "meal";
     	console.log("meal is checked"); 
     }
 
     if($('#perishable').is(':checked')) { 
-        options.perishable = true;
+        options.perishable = 1;
     	console.log("perishable"); 
     }
 
     if($('#non-perishable').is(':checked')) { 
-        options.non-perishable = true;
+        options.nonPerishable = 1;
     	console.log("non-perishable"); 
     }
 
     // then tell server what to search for and which filters!!
 
+
+                 
 
     // TODO: send get or post (idk which is better) request back to server with information to search on
     $.post("/getSearchResults", options, function(response) {
@@ -51,6 +51,38 @@ $(document).ready(function() {
         if(response.status == success){
 
             var resultsJSON = response.json();
+
+            for(var i =0; i<resultsJSON.length; i++){
+                var post = resultsJSON[k];
+
+             var div = document.createElement('div');
+
+                div.className = 'row';
+
+                div.innerHTML = '<input type="text" name="name" value="" />\
+                    <input type="text" name="value" value="" />\
+                    <label> <input type="checkbox" name="check" value="1" /> Checked? </label>\
+                    <input type="button" value="-" onclick="removeRow(this)">';
+
+                 document.getElementById('content').appendChild(div);
+
+
+                // $('.container-element').add(
+
+
+                //     '<div class = "post">
+                //           <a href="profile.html"><img class="userPhoto" src= ' +document.write()+' alt="profile photo"></a>
+                //           <div class="nameStars">
+                //               <li p class="username">Peppy C.:</li>
+                //               <img class="stars" src="stars.png" alt="stars">
+                //                 <p>Totally reccommend Pippys lemons! I made a delicious meringue pie. </p>
+                //             </div>
+                //       </div>'
+
+
+                      //); // append to some new results div on search page
+
+            }
         }
 
 

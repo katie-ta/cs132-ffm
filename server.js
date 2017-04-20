@@ -7,7 +7,7 @@ var hogan = require('hogan.js');
 var begin = require('any-db-transaction');
 var http = require('http');
 var bcrypt = require('bcrypt');
-var fuse = require('fuse');
+var Fuse = require('fuse.js');
 
 var app = express();
 var server = http.createServer(app);
@@ -207,7 +207,15 @@ app.get('/search', function(request, response) {
 	} else {
 		response.redirect('/login');
 	}
-	// catches the search form stuff
+	
+	response.render('search.html', {state: request.session.state});
+
+});
+
+app.post('/getSearchResults', function(request, response){
+
+
+// catches the search form stuff
 	// TODO: get search information
 	// run some sort of search algorithm on all of the posts
 
@@ -218,12 +226,20 @@ app.get('/search', function(request, response) {
 	// TODO: create foodPost div, insert all information, append it to results div
 
 	var posts = []; // list of all applicable posts
-	var searchOptions = request.body.options;// list of all search options sent over from client-side
+	var searchOptions = request.body;// list of all search options sent over from client-side
+	if (searchOptions){
+		// console.log('1');
+		// console.log(searchOptions.perishable + ' ' + searchOptions.snack + ' ' + searchOptions.meal + ' ' + searchOptions.produce);
+		// console.log('2');
+	}else{
+		console.log('request is empty');
+	}
+	
 
-	var q = ('SELECT * FROM posts WHERE available == true AND perishable == ' + searchOptions.perishable + 'AND snack== ' + 
-				searchOptions.snack + 'AND meal == ' + searchOptions.meal + ' AND produce ==' + searchOptions.produce); // SQL query
-
+	var q = ('SELECT * FROM posts WHERE available == 1 AND perishable == ' + searchOptions.perishable + ' AND type == ' + 
+				searchOptions.type); // SQL query
 	var query = conn.query(q);// execute query
+	console.log('returns: ' + query);
 	query.on('row', function(){ // iterate through all rows - I think this is how its done
 
 		var post = { // create post JSON objects for each post because fuse.js accepts JSON objects as parameters
@@ -254,9 +270,8 @@ app.get('/search', function(request, response) {
 	var result = fuse.search(searchOptions.keywords); // search is conducted and result should be all matching json objects
 
 	response.json(result); // results should be sent back as a response
-	response.render('search.html');
 
-});
+} )
 
 app.get('/sortNewest', function(request, response) {
 	// use sort-by package by npm
