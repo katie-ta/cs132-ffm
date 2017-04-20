@@ -177,19 +177,21 @@ app.get('/createpost', function(request,response) {
 })
 
 app.post('/savepost', function(request, response) {
-	var description = request.body.description;
 	var title = request.body.title;
+	var description = request.body.description;
 	var createdAt = request.body.createdAt;
-	var zipcode = request.body.zipcode;
 	var servingSize = request.body.servingSize;
+	var perishable = request.body.perishable;
+	var type = request.body.type;
+	var zipcode = request.body.zipcode;
 	console.log(description);
 	console.log(title);
 	console.log(createdAt);
 	console.log(zipcode);
   
-  	var sql = 'INSERT INTO posts(userEmail, title, description, createdAt, servingSize, perishable, type, zipcode, available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+  	var q = 'INSERT INTO posts(userEmail, title, description, createdAt, servingSize, perishable, type, zipcode, available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
   	conn.query(q, [request.session.email,  title, description, 
-  		createdAt, servingSize, perishable, type, zipcode, available], function(error, result) {
+  		createdAt, servingSize, perishable, type, zipcode, true], function(error, result) {
         if (error != null) { console.log(error); }
       });
   // posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, 
@@ -201,7 +203,7 @@ app.get('/search', function(request, response) {
 	if (request.session.email) {
 		
 
-		
+
 	} else {
 		response.redirect('/login');
 	}
@@ -272,9 +274,9 @@ app.get('/sortRating', function(request, response) {
 })
 
 app.get('/profile', function(request, response) {
-	sess = request.session;
-	if (sess.email) {
-
+	if (request.session.email) {
+		// var sql = 'SELECT * FROM posts WHERE userEmail = $1 AND available = 1';
+		// var availablePosts = conn.query(sql, [user.id]);
 		response.render('profile.html');
 	} else {
 		response.render('signin.html');
@@ -288,12 +290,11 @@ app.get('/profile', function(request, response) {
 
 // get request for profile.html (for someone's profile)
 app.get('/profile/posts', function(request, response) {
-	var user = request.user;
+	sess = request.session;
 	var posts = [];
-	var userID = 1; // replace later with actual user id via authentication
-	var sql = 'SELECT * FROM posts WHERE userId == $1 AND available == true'
+	var sql = 'SELECT * FROM posts WHERE userEmail == $1 AND available = 1'
 	var availablePosts = conn.query(sql, [user.id]);
-	availablePosts.on('row', function(request, response){
+	availablePosts.on('row', function(request, response) {
     var thisId = row.id;
   	var thisTitle = row.title;
   	var thisDescription = row.description;
