@@ -45,35 +45,9 @@ const someOtherPlaintextPassword = 'not_bacon';
 // create message table
 const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
 const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
-const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)';
+const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)';
 
-<<<<<<< HEAD
 app.use(session({secret: 'freefoodmovementsecretsecretthing'}));
-
-
-// create all table schemas and query like below:
-=======
-// app.use(session({  
-//   store: new RedisStore({
-//     url: config.redisStore.url
-//   }),
-//   secret: config.redisStore.secret,
-//   resave: false,
-//   saveUninitialized: false
-// }))
-app.use(passport.initialize())  
-app.use(passport.session())  
-
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
-
 
 // TODO: create all table schemas and query like below:
 conn.query( createMessageTable , function(error, data){
@@ -103,132 +77,103 @@ app.post('/newLogin', function(request, response) {
 	var email = request.body.email;
 	var facebook = 	request.body.facebook;
 	var instagram = request.body.instagram;
-	var sqlcheck = 'SELECT COUNT(1) FROM users WHERE email = $1';
+	var sqlcheck = 'SELECT * FROM users WHERE email = $1';
+	var status = "invalid email";
 	conn.query(sqlcheck, [email], function(error, result) {
 		if (error != null) { console.log(error); }
-		
-	})
-
-	bcrypt.genSalt(10, function(err, salt) {
-    if (err) return next(err);
+		if (result.rowCount === 0) {
+			status = "valid";
+		bcrypt.genSalt(10, function(err, salt) {
+	    if (err) return next(err);
 	    bcrypt.hash(request.body.password, salt, function(err, hash) {
 	      if (err) return next(err);
-	      // newUser.password = hash; // Or however suits your setup
+	      console.log("encrypting");
 
 	      // Store the user to the database, then send the response
 	      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, $2, $3, $4, $5, $6)';
 	      conn.query(sql, [name, hash, zipcode, email, facebook, instagram], function(error, result) {
 	      	if (error != null) { console.log(error); }
 	      	request.session.email = email;
-	      	console.log(request.session.email);
+	      	console.log("successfully added to db");
+	      	response.json({status:"success"});
 	      })
-
-	      response.json({status: "success"});
 	    });
-app.post('/newLogin', function(request, response) {
-	var name = request.name;
-	var zipcode = request.zipcode;
-	var email = request.email;
-	var facebook = request.facebook;
-	var instagram = request.instagram;
+		})
+	} else {
+		response.json({status: "invalid email"});
+	}
+	})
+});
 
-	bcrypt.genSalt(10, function(err, salt) {
-    if (err) return next(err);
-
-    bcrypt.hash(req.body.password, salt, function(err, hash) {
-      if (err) return next(err);
-      // newUser.password = hash; // Or however suits your setup
-
-      // Store the user to the database, then send the response
-      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, 2, $3, $4, $5, $6)';
-      conn.query(sql, [name, hash, zipcode, email. facebook, instagram], function(error, result) {
-      	if (error != null) { console.log(error); }
-      })
-
-      response.json({status: success});
-    });
-  });
+app.get('/login', function(request, response) {
+	response.render('login.html');
 })
 
-app.post('/login', function(request, response) {
-	var email = request.body.email;
-	var password = request.body.password;
-
-
-	passport.use(new LocalStrategy(  
-	  function(email, password, done) {
-	    findUser(email, function (err, user) {
-	      var user = null;
-	      var sql = 'SELECT * FROM users WHERE email = $1 AND password =$2'
-	      var q = conn.query(sql, [email, password], function(error, result) {
-	      	user = result.row;
-	      })
-	      if (user != null) {
-	  	      bcrypt.compare(password, user.password, function(err, res) {
-	  		    if (err) return done(err);
-	  		    if (res === false) {
-	  		      return done(null, false);
-	  		    } else {
-	  		      return done(null, user);
-	  		    }
-	  		  });
-	      } else {
-	      	return done(null, false);
-	      }
-	      
-	    })
-	  }
-	))
-})
 app.post('/checkLogin', function(request, response) {
 	sess = request.session;
 	var email = request.body.email;
 	var password = request.body.password;
-	// Load hash from your password DB. 
 	var sql = 'SELECT password FROM users where email = $1'
+
 	conn.query(sql, [email], function(error, result) {
 		if(error!= null) { console.log(error); }
-		console.log(result.row);
+		var hash = result.rows[0].password;
+		console.log(hash);
 		bcrypt.compare(password, hash, function(err, res) {
-	    // res == true 
-	});
+	    	// res == true 
+	    	console.log(res);
+	    	sess.email = email;
+	    	response.json({status: "success"});
+		});
 	})
 	
 });
 
-// create room identifier
-function generateRoomIdentifier() {
-  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  var result = '';
-  for (var i = 0; i < 6; i++)
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  if (roomIds.has(result)) {
-    result = generateRoomIdentifier();
-  }
-  roomIds.add(result);
-  return result;
-}
-
+app.get('/logout', function(request, response) {
+	console.log("destroying session");
+	request.session.destroy();
+})
 
 // get the home page
 app.get('/', function(request, response) {
+	sess = request.session;
+	console.log("session email: " + sess.email);
+	if (sess.email) {
+		console.log("there's an email!!!");
+		response.render('home.html');
+	} else {
+		console.log("no one's logged in :(");
+		response.render("signin.html");
+	}
+
 	// TODO: query database for all available posts, default sorted by createdAt column
 	var q = 'SELECT * FROM posts WHERE available == true';
 
-
 	// TODO: when a user wants to re-sort, requery database and order by something else?
-
-  response.render('home.html');
+  
 })
 
 app.get('/about', function(request , response) {
-	response.render('about.html');
+	sess = request.session;
+	console.log("session email: " + session);
+	if (request.session.email) {
+		response.render('about.html');
+	} else {
+		response.redirect('/login');
+	}
+	
 })
 
 
-app.get('/createpost', function(request) {
+app.get('/createpost', function(request,response) {
 	console.log("create post server");
-	response.render('createpost.html');
+	console.log("session email: " + request.session.email);
+	if (request.session.email) {
+		;
+		response.render('createpost.html');
+	} else {
+		response.redirect('/login');
+	}
 })
 
 app.post('/savepost', function(request, response) {
@@ -236,20 +181,30 @@ app.post('/savepost', function(request, response) {
 	var title = request.body.title;
 	var createdAt = request.body.createdAt;
 	var zipcode = request.body.zipcode;
-  console.log(description);
-  console.log(title);
-  console.log(createdAt);
-  console.log(zipcode);
-  var sql = 'INSERT INTO posts(userId, title, description, createdAt, servingSize, perishable, type, zipcode, available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
-  conn.query(q, [request.user.id,  title, description, createdAt, servingSize, perishable, type, zipcode, available], function(error, result) {
+	var servingSize = request.body.servingSize;
+	console.log(description);
+	console.log(title);
+	console.log(createdAt);
+	console.log(zipcode);
+  
+  	var sql = 'INSERT INTO posts(userEmail, title, description, createdAt, servingSize, perishable, type, zipcode, available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+  	conn.query(q, [request.session.email,  title, description, 
+  		createdAt, servingSize, perishable, type, zipcode, available], function(error, result) {
         if (error != null) { console.log(error); }
       });
-  // posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, 
+  // posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, 
   // servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)
 
 })
 
 app.get('/search', function(request, response) {
+	if (request.session.email) {
+		
+
+		
+	} else {
+		response.redirect('/login');
+	}
 	// catches the search form stuff
 	// TODO: get search information
 	// run some sort of search algorithm on all of the posts
@@ -317,7 +272,14 @@ app.get('/sortRating', function(request, response) {
 })
 
 app.get('/profile', function(request, response) {
-  response.render('profile.html');
+	sess = request.session;
+	if (sess.email) {
+
+		response.render('profile.html');
+	} else {
+		response.render('signin.html');
+	}
+  
 })
 
 

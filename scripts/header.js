@@ -2,17 +2,11 @@ $(document).ready(function() {
 	var userId = null;
 
 	$('#about').on("click", function() {
-		console.log("aboutttt");
-		$.get("/about", function(response) {
-			window.location = "/about"; 
-		})
+			window.location = "/about";
 	})
 
 	$('#createpost').on("click", function() {
-		console.log("create post client side");
-		$.get("/createpost", function(response) {
 			window.location = "/createpost"; 
-		})
 	})
 
 	$('#logo').on("click", function() {
@@ -32,6 +26,16 @@ $(document).ready(function() {
 	$('#searchheader').on("click", function() {
 		console.log("search client side");
 		window.location = "/search"; 
+	})
+
+	$('#logout').on("click", function() {
+		console.log("logout clicked");
+		$.get('/logout', function(request, response) {
+			console.log("logged out??");
+			
+		})
+		window.location = "/";
+
 	})
 
 
