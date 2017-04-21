@@ -37,7 +37,7 @@ $(document).ready(function() {
             // console.log(response);
             const html = `
             <div class = "foodPost">
-                <a><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
+                <a id="userIcon"><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
                 <ul class="postUser">
                     <li p class="username">${response.name}</li>
                     <li p class="distance">${response.zipcode}</li>
