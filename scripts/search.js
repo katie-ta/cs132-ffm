@@ -47,8 +47,10 @@ $(document).ready(function() {
 
     // TODO: send get or post (idk which is better) request back to server with information to search on
     $.post("/getSearchResults", options, function(response) {
+        console.log("test");
+        console.log("response" + response);
 
-        if(response.status == success){
+        if(response){
 
             var resultsJSON = response.json();
 

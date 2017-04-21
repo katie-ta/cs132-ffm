@@ -267,7 +267,11 @@ app.post('/getSearchResults', function(request, response){
 	};
 
 	var fuse = new Fuse(posts, options); // "list" is the item array
-	var result = fuse.search(searchOptions.keywords); // search is conducted and result should be all matching json objects
+
+	console.log(posts);
+	console.log(options);
+	console.log(searchOptions.keywords);
+	var result = fuse.search(searchOptions.keyword); // search is conducted and result should be all matching json objects
 
 	response.json(result); // results should be sent back as a response
 
