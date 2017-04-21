@@ -24,20 +24,24 @@ $(document).ready(function() {
   })
 
     //TODO: do whatever you need to do to send message
+    var posts;
     $.get("/getAllPosts", function(response) {
-      for (var i = 0; i < response.rowCount; i ++) {
-        var postInfo = response.rows[i];
-        console.log(postInfo.title);
-        $.post("/getUserName", {email: postInfo.userEmail}, function(response) {
-          // response.name is the name of the user who made the post
-          console.log(response);
-          console.log("appending post html");
-          $('.foodFeed').append(createPostHtml(postInfo.id, postInfo.title, postInfo.description, postInfo.email, response.name, response.zipcode));
-        })
       
 
-
+      posts = response;
+    }).done(function() {
+      for (var i = 0; i < posts.rowCount; i ++) {
+        var postInfo = posts.rows[i];
+        console.log(posts.rows[i]);
+        $.post("/getUserName", {email: postInfo.userEmail}, function(response) {
+          console.log("gett username for " + postInfo);
+            // response.name is the name of the user who made the post
+            console.log(response);
+            console.log("appending post html");
+            $('.foodFeed').append(createPostHtml(postInfo.id, postInfo.title, postInfo.description, postInfo.email, response.name, response.zipcode));
+          })
       }
+      
     });
 
     // <div class = "foodPost">

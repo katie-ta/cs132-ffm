@@ -69,8 +69,7 @@ $(document).ready(function() {
   function createPostHtml(id, title, description) {
   	var res = "<div class = \"foodPost\" style=\"display: flex;\">";
   	res += "<ul class=\"postUser\"><li p class=\"username\">" + myName + "</li>";
-  	res += "<input type=\"hidden\" id=\"postId\" value=\"" + id + "\">"
-  	res += "<li p class=\"distance\">" + myZip + "</li>"
+  	res += "<li p class=\"distance\">" + myZip + "</li>";
   	res += "<img class=\"stars\" src=\"stars.png\" alt=\"stars\"></ul>";
   	res += "<div class=foodText >";
   	res += "<a href=\"post.html\"><p class = \"food\">" + title +  "</p></a>";
