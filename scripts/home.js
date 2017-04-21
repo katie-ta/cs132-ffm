@@ -26,23 +26,37 @@ $(document).ready(function() {
     //TODO: do whatever you need to do to send message
     var posts;
     $.get("/getAllPosts", function(response) {
-      
 
       posts = response;
-    }).done(function() {
-      for (var i = 0; i < posts.rowCount; i ++) {
-        var postInfo = posts.rows[i];
-        console.log(posts.rows[i]);
-        $.post("/getUserName", {email: postInfo.userEmail}, function(response) {
-          console.log("gett username for " + postInfo);
+      $.each(response.rows, function(index, val) {
+        console.log(val);
+        $.post("/getUserName", {email: val.userEmail}, function(response) {
+          console.log(val);
+          console.log("gett username for " + response.name);
             // response.name is the name of the user who made the post
-            console.log(response);
-            console.log("appending post html");
-            $('.foodFeed').append(createPostHtml(postInfo.id, postInfo.title, postInfo.description, postInfo.email, response.name, response.zipcode));
+            // console.log(response);
+            const html = `
+            <div class = "foodPost">
+                <a><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
+                <ul class="postUser">
+                    <li p class="username">${response.name}</li>
+                    <li p class="distance">${response.zipcode}</li>
+                </ul>
+              <div class="foodText">
+                  <a href="post.html"><p class = "food">${val.title}</p></a>
+                  <p class = "description">${val.description}</p>
+              </div>
+                <input type="image" class="messageButton" src="message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
+            </div>`
+
+            const $post = $(html);
+            $post.data('postId', val.id);
+            $post.data('userId', response.id);
+
+            $('.foodFeed').append($post);
           })
-      }
-      
-    });
+      });
+    })
 
     // <div class = "foodPost">
     //     <a href="profile.html"><img class="userPhoto" src="dean.jpg" alt="profile photo"></a>
@@ -57,24 +71,5 @@ $(document).ready(function() {
     //   </div>
     //     <input type="image" class="messageButton" src="message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
     // </div>
-
-
-
-    function createPostHtml(id, title, description, email, username, zipcode) {
-
-      var res = "<div class = \"foodPost\">";
-      res += "<ul class=\"postUser\"><li p class=\"username\">" + username + "</li>";
-      res += "<img class=\"userPhoto\" src=\"katie.jpg\" alt=\"profile photo\">"
-      res += "<input type=\"hidden\" id=\"email\" value=\"" + email + "\">"
-      res += "<input type=\"hidden\" id=\"postId\" value=\"" + id + "\">"
-      res += "<li p class=\"distance\">" + zipcode + "</li>"
-      res += "<img class=\"stars\" src=\"stars.png\" alt=\"stars\"></ul>";
-      res += "<div class=\"foodText\">";
-      res += "<a href=\"post.html\"><p class = \"food\">" + title +  "</p></a>";
-      res += "<p class = \"description\">" + description +"</p>"
-      res += "</div>"
-      res += "</div>";
-      return res;
-    }
 
 });
