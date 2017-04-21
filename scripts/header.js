@@ -20,7 +20,7 @@ $(document).ready(function() {
 
 	$('#profileheader').on("click", function() {
 		console.log("profile client side");
-		window.location = "/profile/posts";
+		window.location = "/profile";
 	})
 
 	$('#searchheader').on("click", function() {

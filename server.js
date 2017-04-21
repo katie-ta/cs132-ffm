@@ -147,15 +147,34 @@ app.get('/', function(request, response) {
 	}
 
 	// TODO: query database for all available posts, default sorted by createdAt column
-	var q = 'SELECT * FROM posts WHERE available == true';
+	
 
 	// TODO: when a user wants to re-sort, requery database and order by something else?
   
 })
 
+app.get('/getAllPosts', function(request,response) {
+	console.log("getting all posts");
+	var q = 'SELECT * FROM posts WHERE available = 1';
+	conn.query(q, function(err, result) {
+		response.json(result);
+	});
+
+})
+
+app.post('/getUserName', function(request, response) {
+	var q = 'SELECT name, zipcode FROM users WHERE email = $1';
+	console.log("get username from this email : " + request.body.email);
+	conn.query(q, [request.body.email],function(err, result) {
+		if (err != null) { console.log(err); }
+		console.log(result);
+		response.json(result.rows[0]);
+	});
+})
+
 app.get('/about', function(request , response) {
 	sess = request.session;
-	console.log("session email: " + session);
+	console.log("session email: " + request.session.email);
 	if (request.session.email) {
 		response.render('about.html');
 	} else {
@@ -169,7 +188,6 @@ app.get('/createpost', function(request,response) {
 	console.log("create post server");
 	console.log("session email: " + request.session.email);
 	if (request.session.email) {
-		;
 		response.render('createpost.html');
 	} else {
 		response.redirect('/login');
@@ -251,6 +269,7 @@ app.get('/search', function(request, response) {
 	// var result = fuse.search("old ma");
 
 	response.json(result);
+	response.json({status: "success"})
 	response.render('search.html');
 
 });
@@ -272,65 +291,57 @@ app.get('/sortRating', function(request, response) {
 	response.render('home.html');
 
 })
+// TODO: create get requests for each page:
+
+// get request for profile.html (for someone's profile)
+app.get("/profile/posts", function(request, response) {
+	sess = request.session;
+	console.log("profile posts");
+	var sql = 'SELECT * FROM posts WHERE userEmail = $1 AND available = 1'
+	var posts = []
+	conn.query(sql, [request.session.email], function(error, result) {
+		// console.log(result);
+			for (var i = 0; i < result.rowCount; i++) {
+				console.log(result.rows[i]);
+				posts.push(result.rows[i]);
+			}
+			response.json(result);
+	});
+})
+
+// get request for profile.html (for someone's profile)
+app.get("/profile/user", function(request, response) {
+	sess = request.session;
+	console.log("getting profile user info");
+	var sql = 'SELECT * FROM users WHERE email = $1'
+	var posts = []
+	conn.query(sql, [request.session.email], function(error, result) {
+		response.json(result.rows[0]);
+	});
+})
 
 app.get('/profile', function(request, response) {
-	if (request.session.email) {
-		// var sql = 'SELECT * FROM posts WHERE userEmail = $1 AND available = 1';
-		// var availablePosts = conn.query(sql, [user.id]);
+	if (sess.email) {
+		console.log("profile!!!");
+		// var sql = 'SELECT * FROM posts WHERE userEmail = $1 AND available = 1'
+		// var availablePosts = conn.query(sql, ["charles@yahoo.com"], function(error, result) {
+		// 	// console.log(result);
+		// 	posts = result;
+		// 	for (var i = 0; i < result.rowCount; i++) {
+		// 		console.log(result.rows[i]);
+		// 		result.rows[i];
+		// 	}
+		// });
 		response.render('profile.html');
 	} else {
-		response.render('signin.html');
+		response.redirect('/');
 	}
   
 })
 
 
 
-// TODO: create get requests for each page:
 
-// get request for profile.html (for someone's profile)
-app.get('/profile/posts', function(request, response) {
-	sess = request.session;
-	var posts = [];
-	var sql = 'SELECT * FROM posts WHERE userEmail == $1 AND available = 1'
-	var availablePosts = conn.query(sql, [user.id]);
-	availablePosts.on('row', function(request, response) {
-    var thisId = row.id;
-  	var thisTitle = row.title;
-  	var thisDescription = row.description;
-  	var thisTime = row.createdAt;
-  	var thisType = row.type;
-
-		var post = {
-      id: thisId,
-			title: thisTitle,
-			description: thisDescription,
-			time: thisTime,
-			type: thisType
-		}
-
-		  posts.push(post);
-		})
-
-	q.on('end', function(){
-	 response.json(posts);
-	});
-
-	
-
-
-	// TODO: load all posts that belong this person
-	// if the post is active, append it to the active posts div
-	// TODO: add "active posts div"
-
-
-
-	// if the post is inactive, append it to previous posts div
-	// TODO: get rid of reviews div, add previous posts div (which should be the same styling
-	// as foodFeed)
-
-	// TODO: get all of user's social media links and embed them
-})
 
 
 
