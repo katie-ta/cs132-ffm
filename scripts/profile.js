@@ -37,6 +37,7 @@ $(document).ready(function() {
     console.log(response);
     console.log(response.rowCount);
     for (var i = 0; i < response.rowCount; i ++) {
+      
     	var postInfo = response.rows[i];
     	console.log(postInfo.title);
     	console.log("post id : " + postInfo.id);

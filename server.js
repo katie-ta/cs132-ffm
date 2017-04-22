@@ -145,31 +145,16 @@ app.get('/', function(request, response) {
 		console.log("no one's logged in :(");
 		response.render("signin.html");
 	}
-
-	// TODO: query database for all available posts, default sorted by createdAt column
-	
-
-	// TODO: when a user wants to re-sort, requery database and order by something else?
   
 })
 
 app.get('/getAllPosts', function(request,response) {
 	console.log("getting all posts");
-	var q = 'SELECT * FROM posts WHERE available = 1';
+	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email from users, posts where posts.userEmail = users.email and posts.available = 1;';
 	conn.query(q, function(err, result) {
 		response.json(result);
 	});
 
-})
-
-app.post('/getUserName', function(request, response) {
-	var q = 'SELECT name, zipcode FROM users WHERE email = $1';
-	console.log("get username from this email : " + request.body.email);
-	conn.query(q, [request.body.email],function(err, result) {
-		if (err != null) { console.log(err); }
-		console.log(result);
-		response.json(result.rows[0]);
-	});
 })
 
 app.get('/about', function(request , response) {
@@ -183,10 +168,33 @@ app.get('/about', function(request , response) {
 	
 })
 
+app.post('/post', function(request, response) {
+	if (request.session.email) {
+		response.json({postId: request.body.postId});
+	} else {
+		response.redirect('/login');
+	}
+})
+
+app.get('/post=:postId', function(request, response) {
+	if (request.session.email) {
+		response.render('post.html', {postId:  request.params.postId})
+	} else {
+		response.redirect('/login');
+	}
+	
+});
+
+app.post('/getPostInfo', function(request, response) {
+	var sql = 'select * from users, posts where posts.id = $1 and posts.userEmail = users.email'
+	conn.query(sql, [request.body.postId], function(error, result) {
+		response.json(result.rows[0]);
+	})
+})
+
 
 app.get('/createpost', function(request,response) {
 	console.log("create post server");
-	console.log("session email: " + request.session.email);
 	if (request.session.email) {
 		response.render('createpost.html');
 	} else {
@@ -323,20 +331,10 @@ app.get("/profile/user", function(request, response) {
 app.get('/profile', function(request, response) {
 	if (sess.email) {
 		console.log("profile!!!");
-		// var sql = 'SELECT * FROM posts WHERE userEmail = $1 AND available = 1'
-		// var availablePosts = conn.query(sql, ["charles@yahoo.com"], function(error, result) {
-		// 	// console.log(result);
-		// 	posts = result;
-		// 	for (var i = 0; i < result.rowCount; i++) {
-		// 		console.log(result.rows[i]);
-		// 		result.rows[i];
-		// 	}
-		// });
 		response.render('profile.html');
 	} else {
 		response.redirect('/');
 	}
-  
 })
 
 

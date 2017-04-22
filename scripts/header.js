@@ -38,6 +38,20 @@ $(document).ready(function() {
 
 	})
 
+	$('.foodPost').on("click", function() {
+		console.log("post title clicked");
+	})
+
+	$( ".foodFeed " ).on( "click", "a.postTitle", function() {
+		const postId = $(this).siblings('#postId').val();
+	  	console.log(postId);
+	  	$.post('/post', {postId: postId}, function(response) {
+	  		console.log("response post Id" + response.postId);
+	  		window.location = "/post=" + response.postId;
+	  	});
+	  	// console.log($("#").parent().parent().data('userEmail'));
+	});
+
 
 
     //TODO: do whatever you need to do to send message
