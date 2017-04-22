@@ -7,7 +7,7 @@ var hogan = require('hogan.js');
 var begin = require('any-db-transaction');
 var http = require('http');
 var bcrypt = require('bcrypt');
-var fuse = require('fuse');
+var Fuse = require('fuse.js');
 
 var app = express();
 var server = http.createServer(app);
@@ -233,7 +233,15 @@ app.get('/search', function(request, response) {
 	} else {
 		response.redirect('/login');
 	}
-	// catches the search form stuff
+	
+	response.render('search.html', {state: request.session.state});
+
+});
+
+app.post('/getSearchResults', function(request, response){
+
+
+// catches the search form stuff
 	// TODO: get search information
 	// run some sort of search algorithm on all of the posts
 
@@ -242,25 +250,36 @@ app.get('/search', function(request, response) {
 	// TODO:  redirect to search results page (after Yuri makes it)
 
 	// TODO: create foodPost div, insert all information, append it to results div
-	var posts = [];
-	var searchOptions = request.body.options;
-	var q = 'SELECT * FROM posts WHERE available == true AND searchOptions.';
 
-	var query = conn.query(q);
-	query.on('row', function(){
+	var posts = []; // list of all applicable posts
+	var searchOptions = request.body;// list of all search options sent over from client-side
+	if (searchOptions){
+		// console.log('1');
+		// console.log(searchOptions.perishable + ' ' + searchOptions.snack + ' ' + searchOptions.meal + ' ' + searchOptions.produce);
+		// console.log('2');
+	}else{
+		console.log('request is empty');
+	}
+	
 
-		var post = {
+	var q = ('SELECT * FROM posts WHERE available == 1 AND perishable == ' + searchOptions.perishable + ' AND type == ' + 
+				searchOptions.type); // SQL query
+	var query = conn.query(q);// execute query
+	console.log('returns: ' + query);
+	query.on('row', function(){ // iterate through all rows - I think this is how its done
 
-			id: row.id,
+		var post = { // create post JSON objects for each post because fuse.js accepts JSON objects as parameters
+
+			id: row.id, // assignments
 			title: row.title,
-			decription: decription.title
+			decription: row.description
 
 		}
-		posts.push(post);
+		posts.push(post); // push all post elements into posts
 
 	});
 
-	var options = {
+	var options = { // list of options that need to be provided to fuse.js for search to occur
 	  shouldSort: true,
 	  threshold: 0.6,
 	  location: 0,
@@ -268,19 +287,21 @@ app.get('/search', function(request, response) {
 	  maxPatternLength: 32,
 	  minMatchCharLength: 1,
 	  keys: [
-	    "title",
-	    "author.firstName"
+	    "title", // the keys that are searched
+	    "decription"
 	]
 	};
 
-	// var fuse = new Fuse(posts, options); // "list" is the item array
-	// var result = fuse.search("old ma");
+	var fuse = new Fuse(posts, options); // "list" is the item array
 
-	response.json(result);
-	response.json({status: "success"})
-	response.render('search.html');
+	console.log(posts);
+	console.log(options);
+	console.log(searchOptions.keywords);
+	var result = fuse.search(searchOptions.keyword); // search is conducted and result should be all matching json objects
 
-});
+	response.json(result); // results should be sent back as a response
+
+} )
 
 app.get('/sortNewest', function(request, response) {
 	// use sort-by package by npm
