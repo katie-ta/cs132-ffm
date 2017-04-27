@@ -8,12 +8,12 @@ $(document).ready(function() {
     var keywords = $('#keywords').val();
 
 
-    var options {
+    var options = {
         snack: false,
         produce: false,
         meal: false, 
         perishable: false,
-        non-perishable: false
+        nonperishable: false
     }
 
     if($('#snack').is(':checked')) { 
@@ -37,7 +37,7 @@ $(document).ready(function() {
     }
 
     if($('#non-perishable').is(':checked')) { 
-        options.non-perishable = true;
+        options.nonperishable = true;
     	console.log("non-perishable"); 
     }
 
@@ -48,5 +48,6 @@ $(document).ready(function() {
     $.post("/getSearchResults", options, function(response) {
         // parse the response which contains all the posts filtered
     })
-  }
+
+    }
 });

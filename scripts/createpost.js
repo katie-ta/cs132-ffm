@@ -44,10 +44,9 @@ $(document).ready(function() {
     console.log(response);
 
     $.post("/savePost", response , function(res) {
-        //TODO: send back all data to be inserted into database
-        //you might want to add callback function that is executed post request success
             if (res.status == "success") {
                 console.log("successfully saved message");
+                window.location = "/";
             }
     })
   }

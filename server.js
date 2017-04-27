@@ -7,7 +7,8 @@ var hogan = require('hogan.js');
 var begin = require('any-db-transaction');
 var http = require('http');
 var bcrypt = require('bcrypt');
-var fuse = require('fuse');
+var fuse = require('fuse.js');
+
 
 var app = express();
 var server = http.createServer(app);
@@ -43,9 +44,10 @@ const myPlaintextPassword = 's0/\/\P4$$w0rD';
 const someOtherPlaintextPassword = 'not_bacon';
 
 // create message table
-const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, username TEXT, body TEXT)';
-const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT)';
+const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room INTEGER, user TEXT, body TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
+const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT, description TEXT)';
 const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)';
+const createRoomsTable = 'CREATE TABLE IF NOT EXISTS rooms (id INTEGER PRIMARY KEY, user1 TEXT, user2 TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
 
 app.use(session({secret: 'freefoodmovementsecretsecretthing'}));
 
@@ -59,6 +61,10 @@ conn.query( createUserTable , function(error, data){
 });
 
 conn.query( createPostTable , function(error, data){
+  if (error != null) { console.log(error); }
+});
+
+conn.query( createRoomsTable , function(error, data){
   if (error != null) { console.log(error); }
 });
 
@@ -94,6 +100,7 @@ app.post('/newLogin', function(request, response) {
 	      conn.query(sql, [name, hash, zipcode, email, facebook, instagram], function(error, result) {
 	      	if (error != null) { console.log(error); }
 	      	request.session.email = email;
+	      	request.session.userId = result.lastInsertId;
 	      	console.log("successfully added to db");
 	      	response.json({status:"success"});
 	      })
@@ -110,10 +117,11 @@ app.get('/login', function(request, response) {
 })
 
 app.post('/checkLogin', function(request, response) {
+	console.log(request);
 	sess = request.session;
 	var email = request.body.email;
 	var password = request.body.password;
-	var sql = 'SELECT password FROM users where email = $1'
+	var sql = 'SELECT * FROM users where email = $1'
 
 	conn.query(sql, [email], function(error, result) {
 		if(error!= null) { console.log(error); }
@@ -123,6 +131,7 @@ app.post('/checkLogin', function(request, response) {
 	    	// res == true 
 	    	console.log(res);
 	    	sess.email = email;
+	    	request.session.userId = result.rows[0].id;
 	    	response.json({status: "success"});
 		});
 	})
@@ -140,7 +149,7 @@ app.get('/', function(request, response) {
 	console.log("session email: " + sess.email);
 	if (sess.email) {
 		console.log("there's an email!!!");
-		response.render('home.html');
+		response.render('home.html', {currentUser: sess.email});
 	} else {
 		console.log("no one's logged in :(");
 		response.render("signin.html");
@@ -188,6 +197,7 @@ app.get('/post=:postId', function(request, response) {
 app.post('/getPostInfo', function(request, response) {
 	var sql = 'select * from users, posts where posts.id = $1 and posts.userEmail = users.email'
 	conn.query(sql, [request.body.postId], function(error, result) {
+		console.log(result.rows[0]);
 		response.json(result.rows[0]);
 	})
 })
@@ -219,6 +229,7 @@ app.post('/savepost', function(request, response) {
   	conn.query(q, [request.session.email,  title, description, 
   		createdAt, servingSize, perishable, type, zipcode, true], function(error, result) {
         if (error != null) { console.log(error); }
+        response.json({status: "success"});
       });
   // posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, 
   // servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)
@@ -227,38 +238,33 @@ app.post('/savepost', function(request, response) {
 
 app.get('/search', function(request, response) {
 	if (request.session.email) {
-		
-
+		response.render('search.html');
 
 	} else {
 		response.redirect('/login');
 	}
-	// catches the search form stuff
-	// TODO: get search information
-	// run some sort of search algorithm on all of the posts
+});
 
-	// TODO : look for some sort of search api that will work? OR manually search all posts?
-
-	// TODO:  redirect to search results page (after Yuri makes it)
-
-	// TODO: create foodPost div, insert all information, append it to results div
+app.post('/getSearchResults', function(request, response) {
 	var posts = [];
 	var searchOptions = request.body.options;
-	var q = 'SELECT * FROM posts WHERE available == true AND searchOptions.';
+	var q = 'SELECT * FROM posts WHERE available = 1;';
 
-	var query = conn.query(q);
-	query.on('row', function(){
-
-		var post = {
-
-			id: row.id,
-			title: row.title,
-			decription: decription.title
-
-		}
-		posts.push(post);
-
+	var query = conn.query(q, function(err, response) {
+		if (err != null) { console.log(err); }
+		console.log(response.rows);
+		posts = response.rows;
 	});
+	// console.log(query);
+	// query.on('row', function(){
+	// 	var post = {
+	// 		id: row.id,
+	// 		title: row.title,
+	// 		decription: decription.title
+	// 	}
+	// 	posts.push(post);
+	// 	console.log(post);
+	// });
 
 	var options = {
 	  shouldSort: true,
@@ -269,22 +275,17 @@ app.get('/search', function(request, response) {
 	  minMatchCharLength: 1,
 	  keys: [
 	    "title",
-	    "author.firstName"
+	    "description"
 	]
 	};
-
-	// var fuse = new Fuse(posts, options); // "list" is the item array
-	// var result = fuse.search("old ma");
-
+	var fuse = new Fuse(posts, options);
+	var result = fuse.search("old ma");
 	response.json(result);
 	response.json({status: "success"})
-	response.render('search.html');
-
-});
+})
 
 app.get('/sortNewest', function(request, response) {
 	// use sort-by package by npm
-
 	response.render('home.html');
 })
 
@@ -299,16 +300,17 @@ app.get('/sortRating', function(request, response) {
 	response.render('home.html');
 
 })
-// TODO: create get requests for each page:
 
 // get request for profile.html (for someone's profile)
-app.get("/profile/posts", function(request, response) {
-	sess = request.session;
+app.post("/profile/posts", function(request, response) {
+	// sess = request.session;
 	console.log("profile posts");
-	var sql = 'SELECT * FROM posts WHERE userEmail = $1 AND available = 1'
+	var sql = 'SELECT posts.id, posts.title, posts.description, posts.zipcode, users.email, posts.createdAt, users.name FROM posts, users WHERE users.id = $1 AND posts.userEmail = users.email AND posts.available = 1'
 	var posts = []
-	conn.query(sql, [request.session.email], function(error, result) {
+	console.log("user id?? " + request.body.userId);
+	conn.query(sql, [request.body.userId], function(error, result) {
 		// console.log(result);
+		if (error != null) { console.log(error); }
 			for (var i = 0; i < result.rowCount; i++) {
 				console.log(result.rows[i]);
 				posts.push(result.rows[i]);
@@ -318,32 +320,100 @@ app.get("/profile/posts", function(request, response) {
 })
 
 // get request for profile.html (for someone's profile)
-app.get("/profile/user", function(request, response) {
-	sess = request.session;
+app.post("/profile/userInfo", function(request, response) {
 	console.log("getting profile user info");
-	var sql = 'SELECT * FROM users WHERE email = $1'
-	var posts = []
-	conn.query(sql, [request.session.email], function(error, result) {
+	var sql = 'SELECT * FROM users WHERE id = $1'
+	conn.query(sql, [request.body.userId], function(error, result) {
 		response.json(result.rows[0]);
 	});
 })
 
-app.get('/profile', function(request, response) {
-	if (sess.email) {
-		console.log("profile!!!");
-		response.render('profile.html');
+app.get('/myProfile', function(request, response) {
+	if (request.session.email) {
+		console.log(request.session);
+		response.render('profile.html', {userId: request.session.userId, userEmail: request.session.email});
 	} else {
 		response.redirect('/');
 	}
 })
 
+app.post('/profile', function(request, response) {
+	if (request.session.email) {
+		// var userId;
+		var sql = 'SELECT * FROM users WHERE email = $1'
+		conn.query(sql, [request.body.email], function(error, result) {
+			// userId = result.rows[0].id;
+			console.log(result.rows[0]);
+			response.json(result.rows[0]);
+		});
+		
+	} else {
+		response.redirect('/');
+	}
+})
+
+app.get('/profile=:userId', function(request, response) {
+	console.log("profile: userid!!?? : " + request.params.userId);
+	response.render('profile.html', {userId: request.params.userId, userEmail: request.params.email});
+
+})
+
+app.post('/updateUserInfo', function(request, response) {
+	var sql = 'UPDATE users SET name = $1, zipcode = $2, description = $3 WHERE id = $4;'
+	conn.query(sql, [request.body.name, request.body.zipcode, request.body.description, request.body.id], function(err, res) {
+		if(err != null) { console.log(err); }
+		response.json({status: "success"});
+	})
+})
+
+// var getRoom = 'SELECT name FROM rooms WHERE name=$1;';
+// var getMessages = 'SELECT * FROM messages WHERE room=$1;';
+ var checkChat = 'SELECT * FROM rooms WHERE (user1=$1 AND user2=$2) OR (user1=$2 AND user2=$1);';
+// var updateMostRecent = 'UPDATE rooms SET time=$1 WHERE room=$2;';
+var addNewRoom = 'INSERT INTO rooms VALUES(NULL, $1, $2, CURRENT_TIMESTAMP);';
+var addNewMessage = 'INSERT INTO messages VALUES(NULL, $1, $2, $3, CURRENT_TIMESTAMP);';
+// var getUserId = 'SELECT id FROM rooms WHERE name=$1;';
+
+app.post("/saveMessage", function(request, response) {
+  var q = conn.query(checkChat, [request.session.email, request.body.receiver], function(err, res) {
+  	if (err != null) { console.log(err); }
+  	console.log(res);
+  	if(res.rowCount == 0) {
+  		conn.query(addNewRoom, [request.session.email, request.body.receiver], function(err, res) {
+  			if (err != null) { console.log(err); }
+  			console.log("new room added??");
+  			room = res.lastInsertId;
+  			console.log("last insert id: " + res.lastInsertId);
+  			conn.query(addNewMessage, [room, request.session.email, request.body.body], function(err, res) {
+  				if (err != null) { console.log(err) ;}
+  				response.json({status: "success"});
+  			})
+  		});
+  	} else {
+  		console.log("current room num? " + res.rows[0])
+  		conn.query(addNewMessage, [res])
+  	}
+  })
+})
 
 
-
-
-
-
-
+app.get('/messages', function(request, response) {
+	if (request.session.email) {
+		console.log("messages!!!");
+		var q = conn.query('SELECT * FROM rooms WHERE userEmail1 = $1 OR userEmail2 = $1 ORDERBY time ', [request.session.email], function(error, result) {
+			if (error != null) { console.log(error); }
+			q.on('row', function(row) {
+				console.log(row);
+			})
+		});
+		// q.on('row', function(row){
+	 //   	 var firstRoom = row.name;
+		// });
+		response.render('messages.html', {roomName: ""});
+	} else {
+		response.redirect('/');
+	}
+})
 
 server.listen(8080, function() {
   console.log("Listening on port 8080");

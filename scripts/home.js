@@ -1,10 +1,9 @@
 $(document).ready(function() {
 
-  $("#sendMessage").click(function() {
-    $.get("/createRoom", function(response) {
-      window.location = "/" + response.roomId;
-    });
-    });
+  // $("#sendMessage").click(function() {
+  //   $.get("/createRoom", function(response) {
+  //     window.location = "/" + response.roomId;
+  //   });
   $("#sortByClosest").click(function() {
   	$.get("/sortClosest", function(response) {
 
@@ -30,23 +29,29 @@ $(document).ready(function() {
 
       posts = response;
       $.each(response.rows, function(index, val) {
-        console.log(val);
+        console.log("email " + val.email);
+        var description = val.description;
+        if (description.length > 60) {
+          description = description.substring(0,60) + ". . .";
+        }
 
         const html = `
         <div class = "foodPost">
             
-            <a id="userIcon"><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
+            <a class="userIcon"><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
+            <input id="userEmail" type="hidden" value=${val.email}>
             <ul class="postUser">
-                <input id="userEmail" type="hidden" value=${val.email}>
-                <li p class="username">${val.name}</li>
+                <li p class="username"><b>${val.name}</b></li>
                 <li p class="distance">${val.zipcode}</li>
             </ul>
           <div class="foodText">
               <a class="postTitle"><p class = "food">${val.title}</p></a>
               <input id="postId" type="hidden" value=${val.id}>
-              <p class = "description">${val.description}</p>
+              <p class = "description">${description}</p>
+              <p>Posted on: ${val.createdAt} </p>
           </div>
-            <input type="image" class="messageButton" src="message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
+            <input type="image" class="messageButton" src="message-button.png">
+            <input id="userEmail" type="hidden" value=${val.email}>
         </div>`
 
         const $post = $(html);
