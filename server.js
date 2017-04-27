@@ -12,16 +12,16 @@ var fuse = require('fuse.js');
 
 var app = express();
 var server = http.createServer(app);
-var io = require('socket.io').listen(server);
-var passport = require('passport')
+// var io = require('socket.io').listen(server);
+// var passport = require('passport')
 var session = require('express-session')
-const LocalStrategy = require('passport-local').Strategy
+// const LocalStrategy = require('passport-local').Strategy
 
-var roomIds = new Set();
-var userIds = new Set();
-var postIds = new Set();
+// var roomIds = new Set();
+// var userIds = new Set();
+// var postIds = new Set();
 
-var posts = [];
+// var posts = [];
 
 app.use(express.static(path.join(__dirname, '/css')));
 app.use(express.static(path.join(__dirname, '/imgs')));
