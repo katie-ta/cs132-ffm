@@ -7,8 +7,7 @@ var hogan = require('hogan.js');
 var begin = require('any-db-transaction');
 var http = require('http');
 var bcrypt = require('bcrypt');
-var fuse = require('fuse.js');
-
+var Fuse = require('fuse.js');
 
 var app = express();
 var server = http.createServer(app);
@@ -245,10 +244,38 @@ app.get('/search', function(request, response) {
 	}
 });
 
-app.post('/getSearchResults', function(request, response) {
-	var posts = [];
-	var searchOptions = request.body.options;
-	var q = 'SELECT * FROM posts WHERE available = 1;';
+// app.post('/getSearchResults', function(request, response) {
+// 	var posts = [];
+// 	var searchOptions = request.body.options;
+// 	var q = 'SELECT * FROM posts WHERE available = 1;';
+	
+// 	response.render('search.html', {state: request.session.state});
+
+// });
+
+app.post('/getSearchResults', function(request, response){
+	var posts = []; // list of all applicable posts
+	var searchOptions = request.body;// list of all search options sent over from client-side
+	if (searchOptions){
+		// console.log('1');
+		// console.log(searchOptions.perishable + ' ' + searchOptions.snack + ' ' + searchOptions.meal + ' ' + searchOptions.produce);
+		// console.log('2');
+	} else{ console.log('request is empty');}
+
+	var q = ('SELECT * FROM posts WHERE available == 1 AND perishable == ' + searchOptions.perishable + ' AND type == ' + 
+				searchOptions.type); // SQL query
+	var query = conn.query(q);// execute query
+	console.log('returns: ' + query);
+	query.on('row', function(){ // iterate through all rows - I think this is how its done
+
+		var post = { // create post JSON objects for each post because fuse.js accepts JSON objects as parameters
+
+			id: row.id, // assignments
+			title: row.title,
+			decription: row.description
+
+		}
+		posts.push(post); // push all post elements into posts
 
 	var query = conn.query(q, function(err, response) {
 		if (err != null) { console.log(err); }
@@ -266,7 +293,7 @@ app.post('/getSearchResults', function(request, response) {
 	// 	console.log(post);
 	// });
 
-	var options = {
+	var options = { // list of options that need to be provided to fuse.js for search to occur
 	  shouldSort: true,
 	  threshold: 0.6,
 	  location: 0,
@@ -282,7 +309,17 @@ app.post('/getSearchResults', function(request, response) {
 	var result = fuse.search("old ma");
 	response.json(result);
 	response.json({status: "success"})
+
+
+	console.log(posts);
+	console.log(options);
+	console.log(searchOptions.keywords);
+	var result = fuse.search(searchOptions.keyword); // search is conducted and result should be all matching json objects
+
+	response.json(result); // results should be sent back as a response
+
 })
+});
 
 app.get('/sortNewest', function(request, response) {
 	// use sort-by package by npm
