@@ -251,58 +251,87 @@ app.get('/search', function(request, response) {
 	} else {
 		response.redirect('/login');
 	}
+	
+	response.render('search.html', {state: request.session.state});
+
 });
 
-// app.post('/getSearchResults', function(request, response) {
-// 	var posts = [];
-// 	var searchOptions = request.body.options;
-// 	var q = 'SELECT * FROM posts WHERE available = 1;';
-	
-// 	response.render('search.html', {state: request.session.state});
-
-// });
-
 app.post('/getSearchResults', function(request, response){
-	var posts = []; // list of all applicable posts
+
+// catches the search form stuff
+	// TODO: get search information
+	// run some sort of search algorithm on all of the posts
+
+	// TODO : look for some sort of search api that will work? OR manually search all posts?
+
+	// TODO:  redirect to search results page (after Yuri makes it)
+
+	// TODO: create foodPost div, insert all information, append it to results div
+
+	var posts = []// list of all applicable posts
 	var searchOptions = request.body;// list of all search options sent over from client-side
 	if (searchOptions){
-		// console.log('1');
-		// console.log(searchOptions.perishable + ' ' + searchOptions.snack + ' ' + searchOptions.meal + ' ' + searchOptions.produce);
+		console.log('1');
+		console.log(searchOptions.perishable + ' ' + searchOptions.foodType);
 		// console.log('2');
 	} else{ console.log('request is empty');}
 
-	var q = ('SELECT * FROM posts WHERE available == 1 AND perishable == ' + searchOptions.perishable + ' AND type == ' + 
-				searchOptions.type); // SQL query
-	var query = conn.query(q);// execute query
-	console.log('returns: ' + query);
-	query.on('row', function(){ // iterate through all rows - I think this is how its done
+	//var q = ('SELECT * FROM posts WHERE available == 1 AND perishable == ' + searchOptions.perishable + ' AND type == ' + 
+				//searchOptions.type); // SQL query
+	var q = 'SELECT * FROM posts WHERE userEmail = $1 AND available = 1';
 
-		var post = { // create post JSON objects for each post because fuse.js accepts JSON objects as parameters
+	if(searchOptions.perishable == 1){
+		console.log("perishable conditional");
+		q += ' AND perishable = "true" ';
+	}
+	// if(searchOptions.perishable == 0){
+	// 	q += 'AND perishable = "false"   ' 
+	// }
 
-			id: row.id, // assignments
-			title: row.title,
-			decription: row.description
+	if (searchOptions.foodType == 'snack'){
+		console.log("snack clicked");
+		q += ' AND type = "snack" '; 
+	}
+	if (searchOptions.foodType == 'meal'){
+		q += ' AND type = "meal" '; 
+	}
+	if (searchOptions.foodType == 'produce'){
+		q += ' AND type = "produce" ' ; 
+	}
 
-		}
-		posts.push(post); // push all post elements into posts
+	var query = conn.query(q, [request.session.email], function(error, result){
+		console.log("loop entered");
+		console.log("result" + result);
+		// $.each(result, function(){
+		// 	console.log(result.rows[i].perishable);
+		// 	var post = {
+		// 		id: result.rows[i].id, // assignments
+		// 		title: result.rows[i].title,
+		// 		decription: result.rows[i].description
 
-	var query = conn.query(q, function(err, response) {
-		if (err != null) { console.log(err); }
-		console.log(response.rows);
-		posts = response.rows;
-	});
-	// console.log(query);
-	// query.on('row', function(){
-	// 	var post = {
-	// 		id: row.id,
-	// 		title: row.title,
-	// 		decription: decription.title
-	// 	}
-	// 	posts.push(post);
-	// 	console.log(post);
-	// });
+		// 	}
+		// 		console.log("New JSON Post created");
 
-	var options = { // list of options that need to be provided to fuse.js for search to occur
+		// 		posts.push(result.rows[i]);
+		// });
+
+		console.log(result.rows);
+		for (var i = 0; i < result.rowCount; i++) {
+			console.log(result.rows[i].perishable);
+			var post = {
+				id: result.rows[i].id, // assignments
+				title: result.rows[i].title,
+				decription: result.rows[i].description
+
+			}
+				console.log("New JSON Post created");
+
+				posts.push(result.rows[i]);
+			}
+
+			console.log("posts as of now" + posts);
+
+				var options = { // list of options that need to be provided to fuse.js for search to occur
 	  shouldSort: true,
 	  threshold: 0.6,
 	  location: 0,
@@ -310,25 +339,41 @@ app.post('/getSearchResults', function(request, response){
 	  maxPatternLength: 32,
 	  minMatchCharLength: 1,
 	  keys: [
-	    "title",
-	    "description"
+	    "title", // the keys that are searched
+	    "decription"
 	]
 	};
-	var fuse = new Fuse(posts, options);
-	var result = fuse.search("old ma");
-	response.json(result);
-	response.json({status: "success"})
-
+	console.log("posts as of FUSE" + posts);
+	var fuse = new Fuse(posts, options); // "list" is the item array
 
 	console.log(posts);
-	console.log(options);
 	console.log(searchOptions.keywords);
 	var result = fuse.search(searchOptions.keyword); // search is conducted and result should be all matching json objects
+	console.log("fuse result"+ result);
 
+
+	console.log("length of the result" +  result.length);
 	response.json(result); // results should be sent back as a response
+	} );// execute query
 
-})
-});
+	
+
+	// query.on('row', function(){ // iterate through all rows - I think this is how its done
+	// 	console.log("query test" + row.id);
+	// 	var post = { // create post JSON objects for each post because fuse.js accepts JSON objects as parameters
+
+	// 		id: row.id, // assignments
+	// 		title: row.title,
+	// 		decription: row.description
+
+	// 	}
+	// 	posts.push(post); // push all post elements into posts
+
+	// });
+
+
+
+} )
 
 app.get('/sortNewest', function(request, response) {
 	// use sort-by package by npm
