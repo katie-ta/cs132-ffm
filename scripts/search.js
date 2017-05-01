@@ -10,23 +10,22 @@ $(document).ready(function() {
 
     var options  = {
         keyword : keywords,
-        type: "null", 
+        foodType: "null", 
         perishable: 0,
-        nonPerishable: 0
     }
 
     if($('#snack').is(':checked')) { 
-        options.type = "snack";
+        options.foodType = "snack";
     	console.log("snack is checked"); 
     }
 
     if($('#produce').is(':checked')) { 
-        options.type = "produce";
+        options.foodType = "produce";
     	console.log("produce is checked"); 
     }
 
     if($('#meal').is(':checked')) { 
-        options.type = "meal";
+        options.foodType = "meal";
     	console.log("meal is checked"); 
     }
 
@@ -36,7 +35,7 @@ $(document).ready(function() {
     }
 
     if($('#non-perishable').is(':checked')) { 
-        options.nonPerishable = 1;
+        options.perishable = 0;
     	console.log("non-perishable"); 
     }
 
@@ -44,27 +43,37 @@ $(document).ready(function() {
 
 
                  
-
     // TODO: send get or post (idk which is better) request back to server with information to search on
     $.post("/getSearchResults", options, function(response) {
-        console.log("test");
-        console.log("response" + response);
 
         if(response){
-
-            var resultsJSON = response.json();
+            console.log("fired3");
+            var resultsJSON = response;
+            console.log(resultsJSON.length);
+            document.getElementById('content').innerHTML = '';
 
             for(var i =0; i<resultsJSON.length; i++){
-                var post = resultsJSON[k];
+                console.log("fired2");
+                var val = resultsJSON[i];
 
              var div = document.createElement('div');
 
                 div.className = 'row';
 
-                div.innerHTML = '<input type="text" name="name" value="" />\
-                    <input type="text" name="value" value="" />\
-                    <label> <input type="checkbox" name="check" value="1" /> Checked? </label>\
-                    <input type="button" value="-" onclick="removeRow(this)">';
+                div.innerHTML = `
+        <div class = "foodPost">
+            
+            <a id="userIcon"><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
+            <ul class="postUser">
+                <li p class="distance">${val.zipcode}</li>
+            </ul>
+          <div class="foodText">
+              <a class="postTitle"><p class = "food">${val.title}</p></a>
+              <input id="postId" type="hidden" value=${val.id}>
+              <p class = "description">${val.description}</p>
+          </div>
+            <input type="image" class="messageButton" src="message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
+        </div>`;
 
                  document.getElementById('content').appendChild(div);
 
