@@ -13,7 +13,7 @@ $(document).ready(function() {
     $(".zipcode").after(" " + response.zipcode);
 
     $(".username").text(response.name);
-
+    
     $(".createdAt").after(response.createdAt);
 
     if (response.perishable) {

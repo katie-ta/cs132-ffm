@@ -3,6 +3,8 @@
 <head >
     <meta charset="utf-8">
     <title>Free Food Movement</title>
+    <meta name="userId" content={{userId}}>
+    <meta name="userEmail" content={{userEmail}}>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script type="text/javascript" src="header.js"></script>
@@ -15,7 +17,7 @@
     <div id="headerWrapper">
         <a id="logo"><img id="logo" src="logo.png" alt="logo"></a>
             <ul>
-                <li><a id="searchheader" href="search.html">Search</a></li>
+                <li><a id="searchheader">Search</a></li>
                 <li><a id="createpost">Create Post</a></li>
                 <li><a id="about">About</a></li>
             </ul>
@@ -36,9 +38,11 @@
 
         <div class="profileContent">
             <h2 id="profileName"></h2>
-            <h4 id="profileZipcode">New York, NY</h3>
-            <img src="stars.png" style="width:180px">
-            <p>I have a ton of lemon trees in my backyard and so I often have an abundance of lemons.</p>
+            <h4 id="profileZipcode"></h3>
+            <!-- <img src="stars.png" style="width:180px"> -->
+            <p id="profileDescription">I have a ton of lemon trees in my backyard and so I often have an abundance of lemons.</p>
+            <button id="edit" type="button" class="btn btn=default">Edit</button>
+            <button id="done" type="button" class="btn btn=default">Done</button>
         </div> 
       </div>
       

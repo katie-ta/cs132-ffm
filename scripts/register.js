@@ -8,6 +8,7 @@ $(document).ready(function() {
 		var email = $('#email').val();
 		var password = $('#password').val();
 		var zipcode = $('#zipcode').val();
+		console.log(zipcode);
 
 		var facebook = $('#facebook').val();
 		var instagram = $('#instagram').val();
@@ -40,12 +41,9 @@ $(document).ready(function() {
 			$.post("/newLogin", user, function(response) {
 				console.log(response);
 				if(response.status == "success") {
-					$.get("/", function(response) {
-						window.location = "/"; 
-					})
+						window.location = "/";
 				}
 				console.log(response.status);
-
 			})
 		}
 

@@ -4,7 +4,7 @@
   "description": "final term project",
   "main": "server.js",
   "scripts": {
-    "test": "test",
+    "test": "mocha",
     "start": "node server.js"
   },
   "repository": {
@@ -26,14 +26,19 @@
     "consolidate": "^0.14.5",
     "express": "^4.15.2",
     "express-session": "^1.15.2",
-    "fuse": "^0.4.0",
-    "fuse.js": "^2.6.2",
+    "fuse.js": "^2.7.3",
     "hogan.js": "^3.0.2",
     "http": "0.0.0",
+    "jasmine": "^2.6.0",
+    "jasmine-node": "^1.14.5",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "socket.io": "^1.7.3",
     "sqlite3": "^3.1.8"
+  },
+  "devDependencies": {
+    "jasmine": "^2.6.0",
+    "mocha": "^3.3.0"
   }
 }

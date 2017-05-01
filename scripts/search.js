@@ -99,5 +99,6 @@ $(document).ready(function() {
 
         // parse the response which contains all the posts filtered
     })
-  }
+
+    }
 });
