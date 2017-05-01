@@ -6,22 +6,11 @@ $(document).ready(function() {
     console.log("searching for posts");
 
     var keywords = $('#keywords').val();
-
-
-// <<<<<<< HEAD
-//     var options = {
-//         snack: false,
-//         produce: false,
-//         meal: false, 
-//         perishable: false,
-//         nonperishable: false
-// =======
     var options  = {
         keyword : keywords,
         type: "null", 
         perishable: 0,
         nonPerishable: 0
-// >>>>>>> 980ff64627f75304c34730a45a12581a6463c866
     }
 
     if($('#snack').is(':checked')) { 

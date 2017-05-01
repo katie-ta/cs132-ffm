@@ -124,15 +124,24 @@ app.post('/checkLogin', function(request, response) {
 
 	conn.query(sql, [email], function(error, result) {
 		if(error!= null) { console.log(error); }
-		var hash = result.rows[0].password;
-		console.log(hash);
-		bcrypt.compare(password, hash, function(err, res) {
-	    	// res == true 
-	    	console.log(res);
-	    	sess.email = email;
-	    	request.session.userId = result.rows[0].id;
-	    	response.json({status: "success"});
-		});
+
+		if (result.rowCount == 0) {
+			// TODO: display error message on client side if
+			// login doesn't exist and/or redirect user to create
+			// an account
+			response.json({status: "login does not exist"});
+		} else {
+				var hash = result.rows[0].password;
+				console.log(hash);
+				bcrypt.compare(password, hash, function(err, res) {
+			    	// res == true 
+			    	console.log(res);
+			    	sess.email = email;
+			    	request.session.userId = result.rows[0].id;
+			    	response.json({status: "success"});
+				});
+		}
+		
 	})
 	
 });
@@ -186,7 +195,7 @@ app.post('/post', function(request, response) {
 
 app.get('/post=:postId', function(request, response) {
 	if (request.session.email) {
-		response.render('post.html', {postId:  request.params.postId})
+		response.render('post.html', {postId:  request.params.postId, userEmail: request.session.email})
 	} else {
 		response.redirect('/login');
 	}
@@ -397,7 +406,7 @@ app.get('/profile=:userId', function(request, response) {
 
 app.post('/updateUserInfo', function(request, response) {
 	var sql = 'UPDATE users SET name = $1, zipcode = $2, description = $3 WHERE id = $4;'
-	conn.query(sql, [request.body.name, request.body.zipcode, request.body.description, request.body.id], function(err, res) {
+	conn.query(sql, [request.body.name, request.body.zipcode, request.body.description, request.body.userId], function(err, res) {
 		if(err != null) { console.log(err); }
 		response.json({status: "success"});
 	})

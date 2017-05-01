@@ -1,3 +1,12 @@
+function profileRedirect(profileEmail) {
+	$.post('/profile', {email: profileEmail}, function(response) {
+		console.log("response: " + response);
+		console.log("response user Id" + response.id);
+		window.location = "/profile=" + response.id;
+	});
+}
+
+
 $(document).ready(function() {
 	var userId = null;
 
@@ -65,15 +74,8 @@ $(document).ready(function() {
 	$( ".foodFeed " ).on( "click", "a.userIcon", function() {
 		const userEmail = $(this).siblings('#userEmail').val();
 	  	console.log(userEmail);
-
-	  	$.post('/profile', {email: userEmail}, function(response) {
-	  		console.log("response: " + response);
-	  		console.log("response user Id" + response.id);
-	  		window.location = "/profile=" + response.id;
-	  	});
-	  	// console.log($("#").parent().parent().data('userEmail'));
+	  	profileRedirect(userEmail);
 	});
-
 	$( ".foodFeed " ).on( "click", ".messageButton", function() {
 		const userEmail = $(this).siblings('#userEmail').val();
 	  	console.log(userEmail);

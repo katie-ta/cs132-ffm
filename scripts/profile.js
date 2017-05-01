@@ -38,15 +38,15 @@ $(document).ready(function() {
   
 
 	if (profileInfo.facebook != "") {
-		$('.socMedia').append("<a href='" + profileInfo.facebook + "'><img class=\"socialLink\" src=\"facebook.ico\" alt=\"FB icon\"></a>");;
+		$('.socMedia').append("<a href='" + profileInfo.facebook + "'><img class=\"socialLink\" src=\"facebook.ico\" alt=\"FB icon\"></a>&nbsp;");;
 	}
 	
 	if (profileInfo.instagram != "") {
-		$('.socMedia').append("<a href='" + profileInfo.instagram + "'><img class=\"socialLink\" src=\"insta.png\" alt=\"Instagram icon\"></a>");
+		$('.socMedia').append("<a href='" + profileInfo.instagram + "'><img class=\"socialLink\" src=\"insta.png\" alt=\"Instagram icon\"></a>&nbsp;");
 	}
 
 	if (profileInfo.linkedin) {
-		$('.socMedia').append("<a href='" + profileInfo.linkedin + "'><img class=\"socialLink\" src=\"linkedin.png\" alt=\"LinkedIn icon\"></a>");
+		$('.socMedia').append("<a href='" + profileInfo.linkedin + "'><img class=\"socialLink\" src=\"linkedin.png\" alt=\"LinkedIn icon\"></a>&nbsp;");
 	}
   })
 
@@ -125,8 +125,9 @@ $('#done').on("click", function() {
       zipcode: $('#profileZipcode').text(),
       name: $('#profileName').text()
     }
+    console.log(edits);
     $.post('/updateUserInfo', edits, function(request, response) {
-
+      console.log(response);
     })
 
 })
