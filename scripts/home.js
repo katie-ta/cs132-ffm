@@ -1,9 +1,4 @@
 $(document).ready(function() {
-
-  // $("#sendMessage").click(function() {
-  //   $.get("/createRoom", function(response) {
-  //     window.location = "/" + response.roomId;
-  //   });
   $("#sortByClosest").click(function() {
   	$.get("/sortClosest", function(response) {
 
@@ -16,15 +11,6 @@ $(document).ready(function() {
     });
   })
 
-  $("#sortByRating").click(function() {
-  	$.get("/sortRating", function(response) {
-  		
-    });
-  })
-
-
-
-    //TODO: do whatever you need to do to send message
     $.get("/getAllPosts", function(response) {
 
       posts = response;
@@ -56,12 +42,6 @@ $(document).ready(function() {
         </div>`
 
         const $post = $(html);
-        // $post.data('postId', val.id);
-        // $post.data('userEmail', val.email);
-        // // console.log("binding data: " + val.email);
-
-        // console.log($post.data('postId'));
-        // console.log($post.data('userEmail'));
         $('.foodFeed').append($post);
     })
     });

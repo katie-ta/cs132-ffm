@@ -11,14 +11,7 @@ var Fuse = require('fuse.js');
 
 var app = express();
 var server = http.createServer(app);
-// var io = require('socket.io').listen(server);
-// var passport = require('passport')
-var session = require('express-session')
-// const LocalStrategy = require('passport-local').Strategy
-
-// var roomIds = new Set();
-// var userIds = new Set();
-// var postIds = new Set();
+var session = require('express-session');
 
 var posts = [];
 
@@ -50,7 +43,7 @@ const createRoomsTable = 'CREATE TABLE IF NOT EXISTS rooms (id INTEGER PRIMARY K
 
 app.use(session({secret: 'freefoodmovementsecretsecretthing'}));
 
-// TODO: create all table schemas and query like below:
+// create all table
 conn.query( createMessageTable , function(error, data){
   if (error != null) { console.log(error); }
 });
@@ -205,7 +198,7 @@ app.get('/post=:postId', function(request, response) {
 });
 
 app.post('/getPostInfo', function(request, response) {
-	var sql = 'select * from users, posts where posts.id = $1 and posts.userEmail = users.email'
+	const sql = 'select * from users, posts where posts.id = $1 and posts.userEmail = users.email'
 	conn.query(sql, [request.body.postId], function(error, result) {
 		console.log(result.rows[0]);
 		response.json(result.rows[0]);
@@ -223,142 +216,129 @@ app.get('/createpost', function(request,response) {
 })
 
 app.post('/savepost', function(request, response) {
-	var title = request.body.title;
-	var description = request.body.description;
-	var createdAt = request.body.createdAt;
-	var servingSize = request.body.servingSize;
-	var perishable = request.body.perishable;
-	var type = request.body.type;
-	var zipcode = request.body.zipcode;
+	const title = request.body.title;
+	const description = request.body.description;
+	const createdAt = request.body.createdAt;
+	const servingSize = request.body.servingSize;
+	const perishable = request.body.perishable;
+	const type = request.body.type;
+	const zipcode = request.body.zipcode;
 	console.log(description);
 	console.log(title);
 	console.log(createdAt);
 	console.log(zipcode);
   
-  	var q = 'INSERT INTO posts(userEmail, title, description, createdAt, servingSize, perishable, type, zipcode, available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+  	const q = 'INSERT INTO posts(userEmail, title, description, createdAt, servingSize, perishable, type, zipcode, available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
   	conn.query(q, [request.session.email,  title, description, 
   		createdAt, servingSize, perishable, type, zipcode, true], function(error, result) {
         if (error != null) { console.log(error); }
         response.json({status: "success"});
       });
-  // posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, 
-  // servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)
 
 })
 
 app.get('/search', function(request, response) {
 	if (request.session.email) {
-		response.render('search.html');
-
+		response.render('search.html', {state: request.session.state});
 	} else {
 		response.redirect('/login');
 	}
 	
-	response.render('search.html', {state: request.session.state});
+	
 
 });
 
 app.post('/getSearchResults', function(request, response){
-
-// catches the search form stuff
-	// TODO: get search information
-	// run some sort of search algorithm on all of the posts
-
-	// TODO : look for some sort of search api that will work? OR manually search all posts?
-
-	// TODO:  redirect to search results page (after Yuri makes it)
-
-	// TODO: create foodPost div, insert all information, append it to results div
-
 	var posts = []// list of all applicable posts
 	var searchOptions = request.body;// list of all search options sent over from client-side
 	if (searchOptions){
 		console.log('1');
 		console.log(searchOptions.perishable + ' ' + searchOptions.foodType);
-		// console.log('2');
-	} else{ console.log('request is empty');}
+	} else { console.log('request is empty');}
 
-	//var q = ('SELECT * FROM posts WHERE available == 1 AND perishable == ' + searchOptions.perishable + ' AND type == ' + 
-				//searchOptions.type); // SQL query
-	var q = 'SELECT * FROM posts WHERE userEmail = $1 AND available = 1';
+	var q = 'SELECT posts.id, posts.userEmail, posts.title, posts.description, posts.createdAt, posts.zipcode,'
+	q += ' users.id as userId, users.name as userName FROM posts, users WHERE posts.available = 1 AND users.email = posts.userEmail';
 
 	if(searchOptions.perishable == 1){
 		console.log("perishable conditional");
 		q += ' AND perishable = "true" ';
 	}
-	// if(searchOptions.perishable == 0){
-	// 	q += 'AND perishable = "false"   ' 
-	// }
 
 	if (searchOptions.foodType == 'snack'){
 		console.log("snack clicked");
 		q += ' AND type = "snack" '; 
 	}
+
 	if (searchOptions.foodType == 'meal'){
 		q += ' AND type = "meal" '; 
 	}
+
 	if (searchOptions.foodType == 'produce'){
 		q += ' AND type = "produce" ' ; 
 	}
 
-	var query = conn.query(q, [request.session.email], function(error, result){
+	if(searchOptions.zipcode != 0 ){
+		console.log("zipcode"+ searchOptions.zipcode);
+		console.log("zipcode fired");
+		q += ' AND zipcode = ' + searchOptions.zipcode;
+	}
+
+	var query = conn.query(q, function(error, result){
+		if (error != null) { console.log(error); }
 		console.log("loop entered");
-		console.log("result" + result);
-		// $.each(result, function(){
-		// 	console.log(result.rows[i].perishable);
-		// 	var post = {
-		// 		id: result.rows[i].id, // assignments
-		// 		title: result.rows[i].title,
-		// 		decription: result.rows[i].description
+		console.log("result " + result);
 
-		// 	}
-		// 		console.log("New JSON Post created");
 
-		// 		posts.push(result.rows[i]);
-		// });
-
-		console.log(result.rows);
-		for (var i = 0; i < result.rowCount; i++) {
-			console.log(result.rows[i].perishable);
-			var post = {
-				id: result.rows[i].id, // assignments
-				title: result.rows[i].title,
-				decription: result.rows[i].description
-
-			}
+		if (result) {
+			console.log("result rows " + result.rowCount);
+			for (var i = 0; i < result.rowCount; i++) {
+				console.log(result.rows[i].perishable);
+				var post = {
+					id: result.rows[i].id, // assignments
+					title: result.rows[i].title,
+					description: result.rows[i].description,
+					zipcode : result.rows[i].zipcode,
+					createdAt : result.rows[i].createdAt,
+					userName : result.rows[i].userName,
+					userId : result.rows[i].userId
+					}
 				console.log("New JSON Post created");
-
 				posts.push(result.rows[i]);
 			}
+		}
 
-			console.log("posts as of now" + posts);
+	console.log("posts as of now" + posts);
 
-				var options = { // list of options that need to be provided to fuse.js for search to occur
-	  shouldSort: true,
-	  threshold: 0.6,
-	  location: 0,
-	  distance: 100,
-	  maxPatternLength: 32,
-	  minMatchCharLength: 1,
-	  keys: [
-	    "title", // the keys that are searched
-	    "decription"
-	]
-	};
+	var options = { // list of options that need to be provided to fuse.js for search to occur
+		  shouldSort: true,
+		  threshold: 0.6,
+		  location: 0,
+		  distance: 100,
+		  maxPatternLength: 32,
+		  minMatchCharLength: 1,
+		  keys: [
+		    "title", // the keys that are searched
+		    "description"
+			]
+		};
+
 	console.log("posts as of FUSE" + posts);
 	var fuse = new Fuse(posts, options); // "list" is the item array
 
 	console.log(posts);
 	console.log(searchOptions.keywords);
-	var result = fuse.search(searchOptions.keyword); // search is conducted and result should be all matching json objects
-	console.log("fuse result"+ result);
+	var result = fuse.search(searchOptions.keyword); // search is conducted and result should be all matching json object;
 
+	console.log();
+	 if(searchOptions.keyword == ""){ //if there are no keywords return all posts
+		 console.log(posts);
+		 response.json(posts);
+	 } else {
+	 	console.log("fjkdal;fjka;gja; here");
+		response.json(result); // results should be sent back as a response
+	 }
 
-	console.log("length of the result" +  result.length);
-	response.json(result); // results should be sent back as a response
-	} );// execute query
-
-
+	} );
 
 } )
 
