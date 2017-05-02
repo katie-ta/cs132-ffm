@@ -43,11 +43,6 @@ $(document).ready(function() {
         options.zipcode = $('#zipcode').val();
     }
 
-    // then tell server what to search for and which filters!!
-
-
-                 
-    // TODO: send get or post (idk which is better) request back to server with information to search on
     $.post("/getSearchResults", options, function(response) {
 
         if(response){
@@ -84,28 +79,8 @@ $(document).ready(function() {
 
                  document.getElementById('content').appendChild(div);
 
-
-                // $('.container-element').add(
-
-
-                //     '<div class = "post">
-                //           <a href="profile.html"><img class="userPhoto" src= ' +document.write()+' alt="profile photo"></a>
-                //           <div class="nameStars">
-                //               <li p class="username">Peppy C.:</li>
-                //               <img class="stars" src="stars.png" alt="stars">
-                //                 <p>Totally reccommend Pippys lemons! I made a delicious meringue pie. </p>
-                //             </div>
-                //       </div>'
-
-
-                      //); // append to some new results div on search page
-
             }
         }
-
-
-        // parse the response which contains all the posts filtered
     })
-
     }
 });

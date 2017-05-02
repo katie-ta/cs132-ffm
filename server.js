@@ -276,6 +276,13 @@ app.post('/getSearchResults', function(request, response){
 	if (searchOptions.foodType == 'produce'){
 		q += ' AND type = "produce" ' ; 
 	}
+	if(searchOptions.zipcode != 0 ){
+		console.log("zipcode"+ searchOptions.zipcode);
+		console.log("zipcode fired");
+		q += ' AND zipcode == ' + searchOptions.zipcode;
+
+
+	}
 
 	if(searchOptions.zipcode != 0 ){
 		console.log("zipcode"+ searchOptions.zipcode);
@@ -287,7 +294,6 @@ app.post('/getSearchResults', function(request, response){
 		if (error != null) { console.log(error); }
 		console.log("loop entered");
 		console.log("result " + result);
-
 
 		if (result) {
 			console.log("result rows " + result.rowCount);
