@@ -20,7 +20,7 @@ var session = require('express-session')
 // var userIds = new Set();
 // var postIds = new Set();
 
-// var posts = [];
+var posts = [];
 
 app.use(express.static(path.join(__dirname, '/css')));
 app.use(express.static(path.join(__dirname, '/imgs')));
@@ -167,8 +167,9 @@ app.get('/', function(request, response) {
 
 app.get('/getAllPosts', function(request,response) {
 	console.log("getting all posts");
-	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email from users, posts where posts.userEmail = users.email and posts.available = 1;';
+	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
 	conn.query(q, function(err, result) {
+		// add each post to global posts array to use in sort-by
 		response.json(result);
 	});
 
@@ -356,21 +357,6 @@ app.post('/getSearchResults', function(request, response){
 	response.json(result); // results should be sent back as a response
 	} );// execute query
 
-	
-
-	// query.on('row', function(){ // iterate through all rows - I think this is how its done
-	// 	console.log("query test" + row.id);
-	// 	var post = { // create post JSON objects for each post because fuse.js accepts JSON objects as parameters
-
-	// 		id: row.id, // assignments
-	// 		title: row.title,
-	// 		decription: row.description
-
-	// 	}
-	// 	posts.push(post); // push all post elements into posts
-
-	// });
-
 
 
 } )
@@ -384,12 +370,6 @@ app.get('/sortClosest', function(request, response) {
 	// use sort-by package by npm
 
 	response.render('home.html');
-})
-
-app.get('/sortRating', function(request, response) {
-	// use sort-by package by npm
-	response.render('home.html');
-
 })
 
 // get request for profile.html (for someone's profile)
@@ -486,7 +466,6 @@ app.post("/saveMessage", function(request, response) {
   	}
   })
 })
-
 
 app.get('/messages', function(request, response) {
 	if (request.session.email) {

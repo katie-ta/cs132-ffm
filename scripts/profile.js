@@ -74,8 +74,7 @@ $(document).ready(function() {
                 <li p class="distance">${val.zipcode}</li>
             </ul>
           <div class="foodText">
-              <a class="postTitle"><p class = "food">${val.title}</p></a>
-              <input id="postId" type="hidden" value=${val.id}>
+              <a href="/post=${val.id}"><p class = "food">${val.title}</p></a>
               <p class = "description">${description}</p>
               <p>Posted on:  ${val.createdAt}</p>
           </div>
