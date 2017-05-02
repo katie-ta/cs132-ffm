@@ -276,7 +276,7 @@ app.post('/getSearchResults', function(request, response){
 		q += ' AND perishable = "true" ';
 	}
 	// if(searchOptions.perishable == 0){
-	// 	q += 'AND perishable = "false"   ' 
+	// 	q += 'AND perishable = "false"   '; 
 	// }
 
 	if (searchOptions.foodType == 'snack'){
@@ -288,6 +288,13 @@ app.post('/getSearchResults', function(request, response){
 	}
 	if (searchOptions.foodType == 'produce'){
 		q += ' AND type = "produce" ' ; 
+	}
+	if(searchOptions.zipcode != 0 ){
+		console.log("zipcode"+ searchOptions.zipcode);
+		console.log("zipcode fired");
+		q += ' AND zipcode == ' + searchOptions.zipcode;
+
+
 	}
 
 	var query = conn.query(q, [request.session.email], function(error, result){
@@ -312,7 +319,8 @@ app.post('/getSearchResults', function(request, response){
 			var post = {
 				id: result.rows[i].id, // assignments
 				title: result.rows[i].title,
-				decription: result.rows[i].description
+				description: result.rows[i].description,
+				zipcode : result.rows[i].zipcode,
 
 			}
 				console.log("New JSON Post created");
@@ -331,7 +339,7 @@ app.post('/getSearchResults', function(request, response){
 	  minMatchCharLength: 1,
 	  keys: [
 	    "title", // the keys that are searched
-	    "decription"
+	    "description"
 	]
 	};
 	console.log("posts as of FUSE" + posts);
@@ -344,7 +352,17 @@ app.post('/getSearchResults', function(request, response){
 
 
 	console.log("length of the result" +  result.length);
-	response.json(result); // results should be sent back as a response
+	
+	console.log();
+	 if(searchOptions.keyword == ""){ //if there are no keywords return all posts
+	 	console.log("fired");
+	 	response.json(posts);
+	 }
+
+	 else{
+		response.json(result); // results should be sent back as a response
+	 }
+
 	} );// execute query
 
 	

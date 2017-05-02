@@ -6,12 +6,13 @@ $(document).ready(function() {
     console.log("searching for posts");
 
     var keywords = $('#keywords').val();
-
+    console.log("initial keywords" + keywords);
 
     var options  = {
         keyword : keywords,
         foodType: "null", 
         perishable: 0,
+        zipcode: 0,
     }
 
     if($('#snack').is(':checked')) { 
@@ -37,6 +38,9 @@ $(document).ready(function() {
     if($('#non-perishable').is(':checked')) { 
         options.perishable = 0;
     	console.log("non-perishable"); 
+    }
+    if($('#zipcode').val() != null) { 
+        options.zipcode = $('#zipcode').val();
     }
 
     // then tell server what to search for and which filters!!
@@ -102,3 +106,10 @@ $(document).ready(function() {
 
     }
 });
+
+// function sum(x,y ){
+
+//     return x+y;
+
+
+// }
