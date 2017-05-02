@@ -215,6 +215,7 @@ h1{
   border: 2px solid #DCDCDC;
   height: 180px;
   padding-top: 25px;
+  display: flex;
 }
 
 .foodFeed{
@@ -269,11 +270,13 @@ h1{
 .stars{
     width:100px;
 }
+
 .messageButton{
     height:45px;
     float:right;
     display:inline-block;
     padding-right: 20px;
+
 }
 
 /* ------------ Search Bar -------------*/

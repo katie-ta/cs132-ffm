@@ -83,31 +83,33 @@ app.post('/newLogin', function(request, response) {
 	var facebook = 	request.body.facebook;
 	var instagram = request.body.instagram;
 	var sqlcheck = 'SELECT * FROM users WHERE email = $1';
-	var status = "invalid email";
 	conn.query(sqlcheck, [email], function(error, result) {
 		if (error != null) { console.log(error); }
 		if (result.rowCount === 0) {
+			// email doesn't exist!! add to database and encrypt password
 			status = "valid";
-		bcrypt.genSalt(10, function(err, salt) {
-	    if (err) return next(err);
-	    bcrypt.hash(request.body.password, salt, function(err, hash) {
-	      if (err) return next(err);
-	      console.log("encrypting");
+			bcrypt.genSalt(10, function(err, salt) {
+		    if (err) return next(err);
+		    // encrypts password
+		    bcrypt.hash(request.body.password, salt, function(err, hash) {
+		      if (err) return next(err);
+		      console.log("encrypting");
 
-	      // Store the user to the database, then send the response
-	      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, $2, $3, $4, $5, $6)';
-	      conn.query(sql, [name, hash, zipcode, email, facebook, instagram], function(error, result) {
-	      	if (error != null) { console.log(error); }
-	      	request.session.email = email;
-	      	request.session.userId = result.lastInsertId;
-	      	console.log("successfully added to db");
-	      	response.json({status:"success"});
-	      })
-	    });
-		})
-	} else {
-		response.json({status: "invalid email"});
-	}
+		      // Store the user to the database, then send the response
+		      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, $2, $3, $4, $5, $6)';
+		      conn.query(sql, [name, hash, zipcode, email, facebook, instagram], function(error, result) {
+		      	if (error != null) { console.log(error); }
+		      	request.session.email = email;
+		      	request.session.userId = result.lastInsertId;
+		      	console.log("successfully added to db");
+		      	response.json({status:"success"});
+		      })
+		    });
+			})
+		} else {
+			// email already exists
+			response.json({status: "invalid email"});
+		}
 	})
 });
 
@@ -117,7 +119,6 @@ app.get('/login', function(request, response) {
 
 app.post('/checkLogin', function(request, response) {
 	console.log(request);
-	sess = request.session;
 	var email = request.body.email;
 	var password = request.body.password;
 	var sql = 'SELECT * FROM users where email = $1'
@@ -136,7 +137,7 @@ app.post('/checkLogin', function(request, response) {
 				bcrypt.compare(password, hash, function(err, res) {
 			    	// res == true 
 			    	console.log(res);
-			    	sess.email = email;
+			    	request.session.email = email;
 			    	request.session.userId = result.rows[0].id;
 			    	response.json({status: "success"});
 				});
