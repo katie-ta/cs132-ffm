@@ -1,3 +1,12 @@
+function profileRedirect(profileEmail) {
+	$.post('/profile', {email: profileEmail}, function(response) {
+		console.log("response: " + response);
+		console.log("response user Id" + response.id);
+		window.location = "/profile=" + response.id;
+	});
+}
+
+
 $(document).ready(function() {
 	var userId = null;
 
@@ -38,14 +47,14 @@ $(document).ready(function() {
 
 	})
 
-	$( ".foodFeed " ).on( "click", "a.postTitle", function() {
-		const postId = $(this).siblings('#postId').val();
-	  	console.log(postId);
-	  	$.post('/post', {postId: postId}, function(response) {
-	  		console.log("response post Id" + response.postId);
-	  		window.location = "/post=" + response.postId;
-	  	});
-	});
+	// $( ".foodFeed " ).on( "click", "a.postTitle", function() {
+	// 	const postId = $(this).siblings('#postId').val();
+	//   	console.log(postId);
+	//   	$.post('/post', {postId: postId}, function(response) {
+	//   		console.log("response post Id" + response.postId);
+	//   		window.location = "/post=" + response.postId;
+	//   	});
+	// });
 
 	// $ (".foodFeed").on( "click", ".messageButton", function() {
 	// 	const userEmail = $(this).siblings('#userEmail').val();
@@ -62,22 +71,15 @@ $(document).ready(function() {
 		
 	// })
 
-	$( ".foodFeed " ).on( "click", "a.userIcon", function() {
-		const userEmail = $(this).siblings('#userEmail').val();
-	  	console.log(userEmail);
-
-	  	$.post('/profile', {email: userEmail}, function(response) {
-	  		console.log("response: " + response);
-	  		console.log("response user Id" + response.id);
-	  		window.location = "/profile=" + response.id;
-	  	});
-	  	// console.log($("#").parent().parent().data('userEmail'));
-	});
+	// $( ".foodFeed " ).on( "click", "a.userIcon", function() {
+	// 	const userEmail = $(this).siblings('#userEmail').val();
+	//   	console.log(userEmail);
+	//   	profileRedirect(userEmail);
+	// });
 
 	$( ".foodFeed " ).on( "click", ".messageButton", function() {
 		const userEmail = $(this).siblings('#userEmail').val();
 	  	console.log(userEmail);
-
 	  	window.location.href = "mailto:" + userEmail;
 	});
 });

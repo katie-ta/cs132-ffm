@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Free Food Movement</title>
     <meta name="postId" content={{postId}}>
+    <meta name="userEmail" content={{userEmail}}>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -37,25 +38,36 @@
           <div class="label" id="labels">
             
           </div>
+
+          <div class="editButtons">
+            <button id="edit" type="button" class="btn btn=default">Edit</button>
+            <button id="done" type="button" class="btn btn=default">Done</button>
+          </div>
+
+
           <div class="userInfo">
-            <a href="profile.html"><img class="userPhoto" src="/dean.jpg" alt="profile photo"></a>
+            <a class="userIcon"><img class="userPhoto" src="/dean.jpg" alt="profile photo"></a>
             <ul class="postUser">
                 <li p class="username"></li>
+                <p class="userDescription"></p>
                 <!-- <li p class="distance">0.3 mile away</li>
                 <img class="stars" src="/stars.png" alt="stars"> -->
             </ul>
           </div>
           
           <div class="postDescription">
-            <h5 class="descriptionHeader"><b>Description:</b><h5>
+            <h5><b>Description:</b><h5>
+              <p id="description"></p>
           </div>
 
           <div>
-            <h5 class="zipcode"><b>Pickup Zipcode:</b></h5>
+            <h5 ><b>Pickup Zipcode:</b></h5>
+            <p id="zipcode"></p>
           </div>
 
           <div>
-            <h5 class="createdAt"><b>Posted On: </b></h5>
+            <h5><b>Posted On: </b></h5>
+            <p id="createdAt"></p>
           </div>
 
           <div id="myCarousel" class="carousel slide" data-ride="carousel" style="width: 400px; margin: 0 auto">
@@ -97,12 +109,12 @@
             </a>
           </div>
         
-          <div class="send-message-form">
+          <!-- <div class="send-message-form">
             <div class="form-group">
                <label for="description">Enter text to send a message:</label>
               <textarea id="description" class="form-control" rows="3" placeholder="Hey! I saw your post and was wondering if it was still available?"></textarea>
           </div>
-            <input id="sendMessage" type="submit" class="btn btn-info" value="Send">
+            <input id="sendMessage" type="submit" class="btn btn-info" value="Send"> -->
           </div>
          
         </div>

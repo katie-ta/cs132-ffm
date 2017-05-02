@@ -20,7 +20,7 @@ var session = require('express-session')
 // var userIds = new Set();
 // var postIds = new Set();
 
-// var posts = [];
+var posts = [];
 
 app.use(express.static(path.join(__dirname, '/css')));
 app.use(express.static(path.join(__dirname, '/imgs')));
@@ -124,15 +124,24 @@ app.post('/checkLogin', function(request, response) {
 
 	conn.query(sql, [email], function(error, result) {
 		if(error!= null) { console.log(error); }
-		var hash = result.rows[0].password;
-		console.log(hash);
-		bcrypt.compare(password, hash, function(err, res) {
-	    	// res == true 
-	    	console.log(res);
-	    	sess.email = email;
-	    	request.session.userId = result.rows[0].id;
-	    	response.json({status: "success"});
-		});
+
+		if (result.rowCount == 0) {
+			// TODO: display error message on client side if
+			// login doesn't exist and/or redirect user to create
+			// an account
+			response.json({status: "login does not exist"});
+		} else {
+				var hash = result.rows[0].password;
+				console.log(hash);
+				bcrypt.compare(password, hash, function(err, res) {
+			    	// res == true 
+			    	console.log(res);
+			    	sess.email = email;
+			    	request.session.userId = result.rows[0].id;
+			    	response.json({status: "success"});
+				});
+		}
+		
 	})
 	
 });
@@ -158,8 +167,9 @@ app.get('/', function(request, response) {
 
 app.get('/getAllPosts', function(request,response) {
 	console.log("getting all posts");
-	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email from users, posts where posts.userEmail = users.email and posts.available = 1;';
+	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
 	conn.query(q, function(err, result) {
+		// add each post to global posts array to use in sort-by
 		response.json(result);
 	});
 
@@ -186,7 +196,7 @@ app.post('/post', function(request, response) {
 
 app.get('/post=:postId', function(request, response) {
 	if (request.session.email) {
-		response.render('post.html', {postId:  request.params.postId})
+		response.render('post.html', {postId:  request.params.postId, userEmail: request.session.email})
 	} else {
 		response.redirect('/login');
 	}
@@ -365,21 +375,6 @@ app.post('/getSearchResults', function(request, response){
 
 	} );// execute query
 
-	
-
-	// query.on('row', function(){ // iterate through all rows - I think this is how its done
-	// 	console.log("query test" + row.id);
-	// 	var post = { // create post JSON objects for each post because fuse.js accepts JSON objects as parameters
-
-	// 		id: row.id, // assignments
-	// 		title: row.title,
-	// 		decription: row.description
-
-	// 	}
-	// 	posts.push(post); // push all post elements into posts
-
-	// });
-
 
 
 } )
@@ -393,12 +388,6 @@ app.get('/sortClosest', function(request, response) {
 	// use sort-by package by npm
 
 	response.render('home.html');
-})
-
-app.get('/sortRating', function(request, response) {
-	// use sort-by package by npm
-	response.render('home.html');
-
 })
 
 // get request for profile.html (for someone's profile)
@@ -460,7 +449,7 @@ app.get('/profile=:userId', function(request, response) {
 
 app.post('/updateUserInfo', function(request, response) {
 	var sql = 'UPDATE users SET name = $1, zipcode = $2, description = $3 WHERE id = $4;'
-	conn.query(sql, [request.body.name, request.body.zipcode, request.body.description, request.body.id], function(err, res) {
+	conn.query(sql, [request.body.name, request.body.zipcode, request.body.description, request.body.userId], function(err, res) {
 		if(err != null) { console.log(err); }
 		response.json({status: "success"});
 	})
@@ -495,7 +484,6 @@ app.post("/saveMessage", function(request, response) {
   	}
   })
 })
-
 
 app.get('/messages', function(request, response) {
 	if (request.session.email) {

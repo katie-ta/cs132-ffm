@@ -38,15 +38,15 @@ $(document).ready(function() {
   
 
 	if (profileInfo.facebook != "") {
-		$('.socMedia').append("<a href='" + profileInfo.facebook + "'><img class=\"socialLink\" src=\"facebook.ico\" alt=\"FB icon\"></a>");;
+		$('.socMedia').append("<a href='" + profileInfo.facebook + "'><img class=\"socialLink\" src=\"facebook.ico\" alt=\"FB icon\"></a>&nbsp;");;
 	}
 	
 	if (profileInfo.instagram != "") {
-		$('.socMedia').append("<a href='" + profileInfo.instagram + "'><img class=\"socialLink\" src=\"insta.png\" alt=\"Instagram icon\"></a>");
+		$('.socMedia').append("<a href='" + profileInfo.instagram + "'><img class=\"socialLink\" src=\"insta.png\" alt=\"Instagram icon\"></a>&nbsp;");
 	}
 
 	if (profileInfo.linkedin) {
-		$('.socMedia').append("<a href='" + profileInfo.linkedin + "'><img class=\"socialLink\" src=\"linkedin.png\" alt=\"LinkedIn icon\"></a>");
+		$('.socMedia').append("<a href='" + profileInfo.linkedin + "'><img class=\"socialLink\" src=\"linkedin.png\" alt=\"LinkedIn icon\"></a>&nbsp;");
 	}
   })
 
@@ -74,8 +74,7 @@ $(document).ready(function() {
                 <li p class="distance">${val.zipcode}</li>
             </ul>
           <div class="foodText">
-              <a class="postTitle"><p class = "food">${val.title}</p></a>
-              <input id="postId" type="hidden" value=${val.id}>
+              <a href="/post=${val.id}"><p class = "food">${val.title}</p></a>
               <p class = "description">${description}</p>
               <p>Posted on:  ${val.createdAt}</p>
           </div>
@@ -125,8 +124,9 @@ $('#done').on("click", function() {
       zipcode: $('#profileZipcode').text(),
       name: $('#profileName').text()
     }
+    console.log(edits);
     $.post('/updateUserInfo', edits, function(request, response) {
-
+      console.log(response);
     })
 
 })
