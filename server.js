@@ -136,7 +136,6 @@ app.post('/checkLogin', function(request, response) {
 			    	response.json({status: "success"});
 				});
 		}
-		
 	})
 	
 });
@@ -144,6 +143,7 @@ app.post('/checkLogin', function(request, response) {
 app.get('/logout', function(request, response) {
 	console.log("destroying session");
 	request.session.destroy();
+	response.redirect("/");
 })
 
 // get the home page
