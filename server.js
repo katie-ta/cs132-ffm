@@ -12,6 +12,7 @@ var Fuse = require('fuse.js');
 var app = express();
 var server = http.createServer(app);
 var session = require('express-session');
+var sortBy = require('sort-by');
 
 var posts = [];
 
@@ -350,6 +351,13 @@ app.post('/getSearchResults', function(request, response){
 
 app.get('/sortNewest', function(request, response) {
 	// use sort-by package by npm
+
+	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
+	conn.query(q, function(err, result) {
+		// add each post to global posts array to use in sort-by
+		result.sort(sortBy('createdAt'));
+		response.json(result);
+	});
 	response.render('home.html');
 })
 
