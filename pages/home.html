@@ -9,7 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="home.js"></script>
-    <link rel="stylesheet" href="main.css" type="text/css" />
+    <link rel="stylesheet" href="main.css" type="text/css"/>
 </head>
     
   <body>
@@ -23,10 +23,10 @@
                 
             </ul>
             <div id="personal">
-                <a id="profileheader"><img id="profilePhoto" src="dean.jpg" alt="profile photo"></a>
+                <a href="/myProfile"><img id="profilePhoto" src="dean.jpg" alt="profile photo"></a>
             </div>
-            <button id="logout" type="button" class="btn btn-default">Logout</button>
-
+            <a href="/logout" class="btn btn-info btn-lg">
+                      <span class="glyphicon glyphicon-log-out"></span> Log out</a>
     </div>
     </header> 
             
@@ -60,7 +60,7 @@
         </div>
         <div class="col-md-2">
           <div class="dropdown" id="sortBy">
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Sort By
+            <button class="btn btn-default dropdown-toggle" id="sortBy" type="button" data-toggle="dropdown">Sort By
             <span class="caret"></span></button>
             <ul class="dropdown-menu">
               <li><a id="sortByClosest">Closest to me</a></li>
