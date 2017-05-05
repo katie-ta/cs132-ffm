@@ -35,11 +35,11 @@ $(document).ready(function() {
               <p class = "description">${description}</p>
               <p>Posted on: ${val.createdAt} </p>
           </div>
-            <input type="image" class="messageButton" src="message-button.png">
-            <input id="userEmail" type="hidden" value=${val.email}>
+            <a href="mailto:${val.email}"><input type="image" class="messageButton" src="message-button.png" ></a>
         </div>`
 
         const $post = $(html);
+        $post.data("email", val.email);
         $('.foodFeed').append($post);
     })
     });

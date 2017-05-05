@@ -9,10 +9,4 @@ function profileRedirect(profileEmail) {
 
 $(document).ready(function() {
 	var userId = null;
-
-	$( ".foodFeed " ).on( "click", ".messageButton", function() {
-		const userEmail = $(this).siblings('#userEmail').val();
-	  	console.log(userEmail);
-	  	window.location.href = "mailto:" + userEmail;
-	});
 });

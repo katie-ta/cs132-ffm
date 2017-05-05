@@ -50,18 +50,19 @@ $(document).ready(function() {
             
             var resultsJSON = response;
             console.log(resultsJSON.length);
-            document.getElementById('content').innerHTML = '';
+            $('content').empty();
 
             for(var i =0; i<resultsJSON.length; i++){
                 console.log("fired2");
                 var val = resultsJSON[i];
                 console.log(resultsJSON[i]);
 
-             var div = document.createElement('div');
+                let description = val.description;
+                if (description.length > 50) {
+                  description = description.substring(0,50) + ". . .";
+                }
 
-                div.className = 'row';
-
-                div.innerHTML = `
+			const html = `
         <div class = "foodPost">
             
             <a href="/profile=${val.userId}"><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
@@ -71,13 +72,14 @@ $(document).ready(function() {
             </ul>
           <div class="foodText">
               <a href="/post=${val.id}" class="postTitle"><p class = "food">${val.title}</p></a>
-              <p class = "description">${val.description}</p>
+              <p class = "description">${description}</p>
               <p>Posted on: ${val.createdAt} </p>
           </div>
-            <input type="image" class="messageButton" src="message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
+            <a href="mailto:${val.userEmail}"><input type="image" class="messageButton" src="message-button.png" ></a>
         </div>`;
 
-                 document.getElementById('content').appendChild(div);
+					const $post = $(html);
+                 $('.foodFeed').append($post);
 
             }
         }
