@@ -8,15 +8,15 @@
     <script src="register.js" type="text/javascript"></script>
     <link rel="stylesheet" href="main.css" type="text/css" />
 </head>
-    
+
   <body id= "signin">
-      
+
       <div class="page-container">
-      
+
         <h1 style="color:#A3912D;">Create an account.</h1>
-      
+
       <div class="log-container">
-          
+
         <div class="basic-info">
             <div class="form-group">
             <label for="email">First name:</label>
@@ -32,13 +32,13 @@
               <label for="pwd">Password:</label>
               <input id="password" type="password" class="form-control">
               </div>
-            
+
           </div>
-          
+
           <p id="medialink-instruct">Enter at least one social media link.</p>
-          
+
           <div class="socmedia">
-          
+
             <div class="form-group socmedia-links">
               <label for="pwd">Facebook:</label>
               <input id="facebook" type="url" class="form-control">
@@ -47,12 +47,12 @@
             <div class="form-group socmedia-links">
               <label for="pwd">Instagram:</label>
               <input id="instagram" type="url" class="form-control">
-              
+
           </div>
 
           <div class="upload-container">
             <p id="upload-instructions">Upload a photo of yourself:</p>
-          
+
             <a id="upload-btn" class='btn btn-primary' href='javascript:;'>
                 Choose File
                 <input  type="file" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="file_source" size="40"  onchange='$("#upload-file-info").html($(this).val());'>
@@ -65,8 +65,8 @@
           <label for="pwd">Zipcode:</label>
           <input id="zipcode" type="number" class="form-control">
           </div>
-          
-          
+
+
         <input id="create-btn" type="submit" class="btn btn-info sign-btn" value="Create Account">
 
       </div>

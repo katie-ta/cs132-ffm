@@ -129,7 +129,7 @@ app.post('/checkLogin', function(request, response) {
 				var hash = result.rows[0].password;
 				console.log(hash);
 				bcrypt.compare(password, hash, function(err, res) {
-			    	// res == true 
+			    	// res == true
 			    	console.log(res);
 			    	request.session.email = email;
 			    	request.session.userId = result.rows[0].id;
@@ -137,7 +137,7 @@ app.post('/checkLogin', function(request, response) {
 				});
 		}
 	})
-	
+
 });
 
 app.get('/logout', function(request, response) {
@@ -157,7 +157,7 @@ app.get('/', function(request, response) {
 		console.log("no one's logged in :(");
 		response.render("signin.html");
 	}
-  
+
 })
 
 app.get('/getAllPosts', function(request,response) {
@@ -178,7 +178,7 @@ app.get('/about', function(request , response) {
 	} else {
 		response.redirect('/login');
 	}
-	
+
 })
 
 app.post('/post', function(request, response) {
@@ -195,7 +195,7 @@ app.get('/post=:postId', function(request, response) {
 	} else {
 		response.redirect('/login');
 	}
-	
+
 });
 
 app.post('/getPostInfo', function(request, response) {
@@ -228,14 +228,35 @@ app.post('/savepost', function(request, response) {
 	console.log(title);
 	console.log(createdAt);
 	console.log(zipcode);
-  
+
   	const q = 'INSERT INTO posts(userEmail, title, description, createdAt, servingSize, perishable, type, zipcode, available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
-  	conn.query(q, [request.session.email,  title, description, 
+  	conn.query(q, [request.session.email,  title, description,
   		createdAt, servingSize, perishable, type, zipcode, true], function(error, result) {
         if (error != null) { console.log(error); }
         response.json({status: "success"});
       });
 
+})
+
+app.post('/updatePostInfo', function(request, response) {
+  console.log("UPDATES: ");
+  console.log(request.body);
+  var sql = 'UPDATE posts SET description = ?, zipcode = ?, type = ?, perishable = ?, servingSize = ? WHERE id = ?';
+  conn.query(sql, [request.body.description, request.body.zipcode, request.body.type, request.body.perishable, request.body.servingSize, request.body.postId], function(error, result) {
+    if (error != null) { console.log(error); }
+    response.json({status: "success"});
+  })
+
+})
+
+app.post('/deletePost', function(request, response) {
+  console.log("deleting post");
+  var sql = 'UPDATE posts SET available = 0 WHERE id = ?';
+  console.log("with id " + request.body.postId);
+  conn.query(sql, [request.body.postId], function(error, result) {
+    if (error != null) { console.log(error); }
+    response.json({status: "success"});
+  })
 })
 
 app.get('/search', function(request, response) {
@@ -244,8 +265,8 @@ app.get('/search', function(request, response) {
 	} else {
 		response.redirect('/login');
 	}
-	
-	
+
+
 
 });
 
@@ -267,28 +288,22 @@ app.post('/getSearchResults', function(request, response){
 
 	if (searchOptions.foodType == 'snack'){
 		console.log("snack clicked");
-		q += ' AND type = "snack" '; 
+		q += ' AND type = "snack" ';
 	}
 
 	if (searchOptions.foodType == 'meal'){
-		q += ' AND type = "meal" '; 
+		q += ' AND type = "meal" ';
 	}
 
 	if (searchOptions.foodType == 'produce'){
-		q += ' AND type = "produce" ' ; 
+		q += ' AND type = "produce" ' ;
 	}
 	if(searchOptions.zipcode != 0 ){
 		console.log("zipcode"+ searchOptions.zipcode);
 		console.log("zipcode fired");
-		q += ' AND zipcode == ' + searchOptions.zipcode;
+		q += ' AND posts.zipcode = ' + searchOptions.zipcode;
 
 
-	}
-
-	if(searchOptions.zipcode != 0 ){
-		console.log("zipcode"+ searchOptions.zipcode);
-		console.log("zipcode fired");
-		q += ' AND zipcode = ' + searchOptions.zipcode;
 	}
 
 	var query = conn.query(q, function(error, result){
@@ -412,7 +427,7 @@ app.post('/profile', function(request, response) {
 			console.log(result.rows[0]);
 			response.json(result.rows[0]);
 		});
-		
+
 	} else {
 		response.redirect('/');
 	}
