@@ -32,8 +32,8 @@ app.use(express.static(__dirname + '/scripts'));
 
 var conn = anyDB.createConnection('sqlite3://ffm.db'); // create database connection
 
-var AWS_ACCESS_KEY = "AKIAIL63PJC5CZYPPUSA"
-var AWS_SECRET_KEY = '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'
+var AWS_ACCESS_KEY = "AKIAJARZ3SQBYJJHKWFQ"
+var AWS_SECRET_KEY = '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'
 var S3_BUCKET = 'freefoodmvment'
 
 // stuff to use for bcrypt password encryptions
@@ -231,7 +231,7 @@ app.post('/post', function(request, response) {
 
 app.get('/post=:postId', function(request, response) {
 	if (request.session.email) {
-		response.render('post.html', {postId:  request.params.postId, userEmail: request.session.email})
+		response.render('post.html', {postId:  request.params.postId, userEmail: request.session.email, userImg: request.session.userImg})
 	} else {
 		response.redirect('/login');
 	}

@@ -65,7 +65,7 @@ $(document).ready(function() {
 			const html = `
         <div class = "foodPost">
             
-            <a href="/profile=${val.userId}"><img class="userPhoto" src="{val.img}" alt="profile photo"></a>
+            <a href="/profile=${val.userId}"><img class="userPhoto" src="${val.img}" alt="profile photo"></a>
             <ul class="postUser">
                 <li p class="username"><b>${val.userName}</b></li>
                 <li p class="distance">${val.zipcode}</li>

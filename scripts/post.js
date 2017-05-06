@@ -18,8 +18,7 @@ function getPostInfo(postId, currentUser) {
       $('#edit').show();
       $('#delete').show()
     }
-
-
+    $('#userPhoto').attr('src', response.img);
     $(".postTitle").text(response.title);
 
     $("#description").text("" + response.description);
