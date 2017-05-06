@@ -11,6 +11,9 @@ function deletePost(postId) {
 
 function getPostInfo(postId, currentUser) {
   $.post('/getPostInfo', {postId: postId}, function(response) {
+    if (response.available == 0) {
+      console.log("NO LONGER AVAILABLE") ;
+    }
     servingSize = response.servingSize;
     console.log(response);
 
@@ -18,7 +21,8 @@ function getPostInfo(postId, currentUser) {
       $('#edit').show();
       $('#delete').show()
     }
-    $('#userPhoto').attr('src', response.img);
+
+
     $(".postTitle").text(response.title);
 
     $("#description").text("" + response.description);

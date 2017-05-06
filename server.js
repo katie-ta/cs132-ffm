@@ -32,8 +32,8 @@ app.use(express.static(__dirname + '/scripts'));
 
 var conn = anyDB.createConnection('sqlite3://ffm.db'); // create database connection
 
-var AWS_ACCESS_KEY = "AKIAJARZ3SQBYJJHKWFQ"
-var AWS_SECRET_KEY = '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'
+var AWS_ACCESS_KEY = "AKIAJAX2SM3N5PX4PTYA"
+var AWS_SECRET_KEY = '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'
 var S3_BUCKET = 'freefoodmvment'
 
 // stuff to use for bcrypt password encryptions
@@ -75,13 +75,13 @@ function generateImgUrl(id) {
 
 app.get('/sign', function(req, res) {
   aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
-  
+
   var unique_id = uniqid();
   console.log("unique id : " + unique_id);
   var s3 = new aws.S3()
   var options = {
     Bucket: S3_BUCKET,
-    Key: unique_id,
+    Key: unqiue_id,
     Expires: 60,
     ContentType: req.query.file_type,
     ACL: 'public-read'
@@ -475,7 +475,7 @@ app.get('/sortClosest', function(request, response) {
 		});
 
 	}
-	
+
 
 	// response.render('home.html');
 })
@@ -546,6 +546,6 @@ app.post('/updateUserInfo', function(request, response) {
 	})
 })
 
-server.listen(8080, function() {
+server.listen(8000, function() {
   console.log("Listening on port 8080");
 });
