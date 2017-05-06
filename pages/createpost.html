@@ -23,7 +23,7 @@
                     <li><a href="/about">About</a></li>
                 </ul>
             <div id="personal">
-              <a id="profileheader"><img id="profilePhoto" src="dean.jpg" alt="profile photo"></a>
+              <a id="profileheader"><img id="profilePhoto" src={{userImg}} alt="profile photo"></a>
             </div>
             <a href="/logout" class="btn btn-info btn-lg">
                       <span class="glyphicon glyphicon-log-out"></span> Log out</a>
@@ -44,7 +44,7 @@
               <p>How many people can your food serve?</p>
               <input class="form-control" type="number" value="1" id="servingSize">
           </form>
-        
+
 
           <form>
               <p>Perishable?</p>
@@ -57,7 +57,6 @@
           </form>
 
           <form>
-
             <p>Type of food?</p>
             <label class="radio-inline">
               <input id="snack" type="radio" name="optradio">Snack
@@ -69,6 +68,8 @@
               <input id="meal" type="radio" name="optradio">Meal
             </label>
           </form>
+
+
         <form>
           <div class="form-group">
             <label for="zipcode">Pickup Zipcode</label>
