@@ -10,36 +10,36 @@ $(document).ready(function() {
 
     var options  = {
         keyword : keywords,
-        foodType: "null", 
+        foodType: "null",
         perishable: 0,
         zipcode: 0,
     }
 
-    if($('#snack').is(':checked')) { 
+    if($('#snack').is(':checked')) {
         options.foodType = "snack";
-    console.log("snack is checked"); 
+    console.log("snack is checked");
     }
 
-    if($('#produce').is(':checked')) { 
+    if($('#produce').is(':checked')) {
         options.foodType = "produce";
     console.log("produce is checked"); 
     }
 
-    if($('#meal').is(':checked')) { 
+    if($('#meal').is(':checked')) {
         options.foodType = "meal";
-    console.log("meal is checked"); 
+    console.log("meal is checked");
     }
 
-    if($('#perishable').is(':checked')) { 
+    if($('#perishable').is(':checked')) {
         options.perishable = 1;
-    console.log("perishable"); 
+    console.log("perishable");
     }
 
-    if($('#non-perishable').is(':checked')) { 
+    if($('#non-perishable').is(':checked')) {
         options.perishable = 0;
-    console.log("non-perishable"); 
+    console.log("non-perishable");
     }
-    if($('#zipcode').val() != null) { 
+    if($('#zipcode').val() != null) {
         options.zipcode = $('#zipcode').val();
     }
 
@@ -47,7 +47,7 @@ $(document).ready(function() {
 
         if(response){
             console.log("fired3");
-            
+
             var resultsJSON = response;
             console.log(resultsJSON.length);
             $('content').empty();

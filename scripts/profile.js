@@ -24,7 +24,7 @@ $(document).ready(function() {
 
   if (myEmail == userEmail) {
     $('#edit').show();
-    
+
   }
 
 
@@ -35,12 +35,12 @@ $(document).ready(function() {
   } else {
     $('#profileDescription').html("<i> no description available </i>");
   }
-  
+
 
 	if (profileInfo.facebook != "") {
 		$('.socMedia').append("<a href='" + profileInfo.facebook + "'><img class=\"socialLink\" src=\"facebook.ico\" alt=\"FB icon\"></a>&nbsp;");;
 	}
-	
+
 	if (profileInfo.instagram != "") {
 		$('.socMedia').append("<a href='" + profileInfo.instagram + "'><img class=\"socialLink\" src=\"insta.png\" alt=\"Instagram icon\"></a>&nbsp;");
 	}
@@ -66,8 +66,13 @@ $(document).ready(function() {
 
         const html = `
         <div class = "foodPost">
+<<<<<<< HEAD
             
             <a class="userIcon"><img class="userPhoto" src=${val.img} alt="profile photo"></a>
+=======
+
+            <a class="userIcon"><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
+>>>>>>> bb23840f4a26564ad2de4dcf3125c3a12a55b08b
             <input id="userEmail" type="hidden" value=${val.email}>
             <ul class="postUser">
                 <li p class="username">${val.name}</li>
@@ -86,7 +91,7 @@ $(document).ready(function() {
         $('.reviewsFeed').append($post);
 
       })
-    
+
   })
 
 $('#edit').on("click", function() {
@@ -101,7 +106,7 @@ $('#edit').on("click", function() {
 
     var $name=$('#profileName'), isEditable=$name.is('.editable');
     $name.prop('contenteditable', !isEditable).toggleClass('editable');
-  
+
 })
 
 $('#done').on("click", function() {
@@ -127,10 +132,19 @@ $('#done').on("click", function() {
     console.log(edits);
     $.post('/updateUserInfo', edits, function(request, response) {
       console.log(response);
+			if (response) {
+				const html = `<div class="alert alert-success alert-dismissable">
+					  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+					  <strong>Success!</strong> Indicates a successful or positive action.
+					</div>`
+				const $alert = $(html);
+				$('.alerts').append($alert);
+
+			}
     })
 
 })
-  
+
   $( ".reviewsFeed " ).on( "click", "a.userIcon", function() {
     const userEmail = $(this).siblings('#userEmail').val();
       console.log(userEmail);
@@ -144,7 +158,7 @@ $('#done').on("click", function() {
   });
 
   $( ".reviewsFeed " ).on( "click", ".messageButton", function() {
-    
+
     const userEmail = $(this).siblings('#userEmail').val();
       console.log(userEmail);
 
