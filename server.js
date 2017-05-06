@@ -8,8 +8,10 @@ var begin = require('any-db-transaction');
 var http = require('http');
 var bcrypt = require('bcrypt');
 var Fuse = require('fuse.js');
+var uniqid = require('uniqid');
 
 var app = express();
+var aws = require('aws-sdk');
 var server = http.createServer(app);
 var session = require('express-session');
 var sortBy = require('sort-by');
@@ -30,6 +32,9 @@ app.use(express.static(__dirname + '/scripts'));
 
 var conn = anyDB.createConnection('sqlite3://ffm.db'); // create database connection
 
+var AWS_ACCESS_KEY = "AKIAIL63PJC5CZYPPUSA"
+var AWS_SECRET_KEY = '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'
+var S3_BUCKET = 'freefoodmvment'
 
 // stuff to use for bcrypt password encryptions
 const saltRounds = 10;
@@ -38,7 +43,7 @@ const someOtherPlaintextPassword = 'not_bacon';
 
 // create message table
 const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room INTEGER, user TEXT, body TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
-const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT, description TEXT)';
+const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT, description TEXT, img TEXT)';
 const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)';
 const createRoomsTable = 'CREATE TABLE IF NOT EXISTS rooms (id INTEGER PRIMARY KEY, user1 TEXT, user2 TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
 
@@ -63,6 +68,35 @@ conn.query( createRoomsTable , function(error, data){
 
 var sess;
 
+function generateImgUrl(id) {
+	return 'https://s3.amazonaws.com/' + S3_BUCKET + '/' + id;
+}
+
+
+app.get('/sign', function(req, res) {
+  aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
+  
+  var unique_id = uniqid();
+  console.log("unique id : " + unique_id);
+  var s3 = new aws.S3()
+  var options = {
+    Bucket: S3_BUCKET,
+    Key: unique_id,
+    Expires: 60,
+    ContentType: req.query.file_type,
+    ACL: 'public-read'
+  }
+
+  s3.getSignedUrl('putObject', options, function(err, data){
+    if(err) return res.send('Error with S3')
+
+    res.json({
+      signed_request: data,
+      url: generateImgUrl(unique_id)
+    })
+  })
+})
+
 app.get('/register', function(request, response) {
 	sess = request.session;
 	console.log(sess);
@@ -76,6 +110,7 @@ app.post('/newLogin', function(request, response) {
 	var email = request.body.email;
 	var facebook = 	request.body.facebook;
 	var instagram = request.body.instagram;
+	var img = request.body.img;
 	var sqlcheck = 'SELECT * FROM users WHERE email = $1';
 	conn.query(sqlcheck, [email], function(error, result) {
 		if (error != null) { console.log(error); }
@@ -90,11 +125,13 @@ app.post('/newLogin', function(request, response) {
 		      console.log("encrypting");
 
 		      // Store the user to the database, then send the response
-		      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram) VALUES ($1, $2, $3, $4, $5, $6)';
-		      conn.query(sql, [name, hash, zipcode, email, facebook, instagram], function(error, result) {
+		      var sql = 'INSERT INTO users(name, password, zipcode, email, facebook, instagram, img) VALUES ($1, $2, $3, $4, $5, $6, $7)';
+		      conn.query(sql, [name, hash, zipcode, email, facebook, instagram, img], function(error, result) {
 		      	if (error != null) { console.log(error); }
 		      	request.session.email = email;
 		      	request.session.userId = result.lastInsertId;
+		      	request.session.zipcode = zipcode;
+		      	request.session.userImg = img;
 		      	console.log("successfully added to db");
 		      	response.json({status:"success"});
 		      })
@@ -133,6 +170,8 @@ app.post('/checkLogin', function(request, response) {
 			    	console.log(res);
 			    	request.session.email = email;
 			    	request.session.userId = result.rows[0].id;
+			    	request.session.zipcode = result.rows[0].zipcode;
+			    	request.session.userImg = result.rows[0].img;
 			    	response.json({status: "success"});
 				});
 		}
@@ -152,7 +191,7 @@ app.get('/', function(request, response) {
 	console.log("session email: " + sess.email);
 	if (sess.email) {
 		console.log("there's an email!!!");
-		response.render('home.html', {currentUser: sess.email});
+		response.render('home.html', {currentUser: sess.email, userImg: request.session.userImg});
 	} else {
 		console.log("no one's logged in :(");
 		response.render("signin.html");
@@ -160,9 +199,10 @@ app.get('/', function(request, response) {
   
 })
 
+// get all available posts for home page
 app.get('/getAllPosts', function(request,response) {
 	console.log("getting all posts");
-	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
+	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.img, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
 	conn.query(q, function(err, result) {
 		// add each post to global posts array to use in sort-by
 		response.json(result);
@@ -174,7 +214,7 @@ app.get('/about', function(request , response) {
 	sess = request.session;
 	console.log("session email: " + request.session.email);
 	if (request.session.email) {
-		response.render('about.html');
+		response.render('about.html', {userImg: request.session.userImg});
 	} else {
 		response.redirect('/login');
 	}
@@ -210,7 +250,7 @@ app.post('/getPostInfo', function(request, response) {
 app.get('/createpost', function(request,response) {
 	console.log("create post server");
 	if (request.session.email) {
-		response.render('createpost.html');
+		response.render('createpost.html', {userImg: request.session.userImg});
 	} else {
 		response.redirect('/login');
 	}
@@ -240,7 +280,7 @@ app.post('/savepost', function(request, response) {
 
 app.get('/search', function(request, response) {
 	if (request.session.email) {
-		response.render('search.html', {state: request.session.state});
+		response.render('search.html', {state: request.session.state, userImg: request.session.userImg});
 	} else {
 		response.redirect('/login');
 	}
@@ -258,7 +298,7 @@ app.post('/getSearchResults', function(request, response){
 	} else { console.log('request is empty');}
 
 	var q = 'SELECT posts.id, posts.userEmail, posts.title, posts.description, posts.createdAt, posts.zipcode,'
-	q += ' users.id as userId, users.name as userName FROM posts, users WHERE posts.available = 1 AND users.email = posts.userEmail';
+	q += 'users.img, users.id as userId, users.name as userName FROM posts, users WHERE posts.available = 1 AND users.email = posts.userEmail';
 
 	if(searchOptions.perishable == 1){
 		console.log("perishable conditional");
@@ -352,7 +392,8 @@ app.post('/getSearchResults', function(request, response){
 app.get('/sortNewest', function(request, response) {
 	// use sort-by package by npm
 
-	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
+	// var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
+	var q = 'select * from posts where available = 1;';
 	conn.query(q, function(err, result) {
 		// add each post to global posts array to use in sort-by
 		result.sort(sortBy('createdAt'));
@@ -361,17 +402,75 @@ app.get('/sortNewest', function(request, response) {
 	response.render('home.html');
 })
 
+function sortLocations(zipcodes, current) {
+  function dist(z) {
+  	let key = "PAdMI2aJADbKcHNNHOrJoiqMYuekK5fAFtmoww879kRm1F9ItAsSSTERoTb8YrIE"
+  	console.log("current " + current);
+  	console.log("z.zipcode " + z.zipcode);
+  	let url = "https://www.zipcodeapi.com/rest/" + key + "/distance.json/" + current +  "/" + z.zipcode +"/km"
+    console.log("url : " + url);
+    app.get(url, function(request, response) {
+    	console.log(response);
+    	console.log("distance from " + current + " to " + z + ": " + response.distance);
+    	return response.distance;
+    })
+  }
+
+  zipcodes.sort(function(z1, z2) {
+    return dist(z1) - dist(z2);
+  });
+}
+
 app.get('/sortClosest', function(request, response) {
 	// use sort-by package by npm
+	if (request.session) {
 
-	response.render('home.html');
+		let currZipcode = request.session.zipcode;
+
+		let key = "PAdMI2aJADbKcHNNHOrJoiqMYuekK5fAFtmoww879kRm1F9ItAsSSTERoTb8YrIE"
+			let url = "https://www.zipcodeapi.com/rest/" + key + "/distance.json/" + currZipcode +  "/" + 92692 +"/km"
+		  console.log("url : " + url);
+		app.get(url, function(request, response) {
+			console.log("response" + response);
+			console.log("distance from " + current + " to " + z + ": " + response.distance);
+			// return response.distance;
+		})
+		console.log('curr zip ' + currZipcode);
+		var q = 'select zipcode from posts where available = 1;';
+		conn.query(q, function(err, result) {
+			// add each post to global posts array to use in sort-by
+			console.log(result.rows);
+			result.rows.forEach(function(z) {
+				console.log("zipcode z " + z.zipcode);
+				let key = "PAdMI2aJADbKcHNNHOrJoiqMYuekK5fAFtmoww879kRm1F9ItAsSSTERoTb8YrIE"
+					let url = "https://www.zipcodeapi.com/rest/" + key + "/distance.json/" + currZipcode +  "/" + z.zipcode +"/km"
+				  console.log("url : " + url);
+				app.get(url, function(request, response) {
+					console.log(request);
+					console.log(response);
+					console.log("distance from " + current + " to " + z + ": " + response.distance);
+					// return response.distance;
+				})
+			})
+			for (let i = 0; i < result.rowCount; i ++) {
+
+			}
+ 			// console.log("sorting? : " + sortLocations(result.rows, currZipcode));
+			// console.log(result);
+			response.json(result.rows);
+		});
+
+	}
+	
+
+	// response.render('home.html');
 })
 
 // get request for profile.html (for someone's profile)
 app.post("/profile/posts", function(request, response) {
 	// sess = request.session;
 	console.log("profile posts");
-	var sql = 'SELECT posts.id, posts.title, posts.description, posts.zipcode, users.email, posts.createdAt, users.name FROM posts, users WHERE users.id = $1 AND posts.userEmail = users.email AND posts.available = 1'
+	var sql = 'SELECT posts.id, posts.title, posts.description, posts.zipcode, users.email, posts.createdAt, users.img, users.name FROM posts, users WHERE users.id = $1 AND posts.userEmail = users.email AND posts.available = 1'
 	var posts = []
 	console.log("user id?? " + request.body.userId);
 	conn.query(sql, [request.body.userId], function(error, result) {
@@ -397,7 +496,7 @@ app.post("/profile/userInfo", function(request, response) {
 app.get('/myProfile', function(request, response) {
 	if (request.session.email) {
 		console.log(request.session);
-		response.render('profile.html', {userId: request.session.userId, userEmail: request.session.email});
+		response.render('profile.html', {userId: request.session.userId, userEmail: request.session.email, userImg: request.session.userImg});
 	} else {
 		response.redirect('/');
 	}
@@ -420,7 +519,7 @@ app.post('/profile', function(request, response) {
 
 app.get('/profile=:userId', function(request, response) {
 	console.log("profile: userid!!?? : " + request.params.userId);
-	response.render('profile.html', {userId: request.params.userId, userEmail: request.params.email});
+	response.render('profile.html', {userId: request.params.userId, userEmail: request.params.email, userImg: request.session.userImg});
 
 })
 
@@ -428,56 +527,9 @@ app.post('/updateUserInfo', function(request, response) {
 	var sql = 'UPDATE users SET name = $1, zipcode = $2, description = $3 WHERE id = $4;'
 	conn.query(sql, [request.body.name, request.body.zipcode, request.body.description, request.body.userId], function(err, res) {
 		if(err != null) { console.log(err); }
+		request.session.zipcode = request.body.zipcode;
 		response.json({status: "success"});
 	})
-})
-
-// var getRoom = 'SELECT name FROM rooms WHERE name=$1;';
-// var getMessages = 'SELECT * FROM messages WHERE room=$1;';
- var checkChat = 'SELECT * FROM rooms WHERE (user1=$1 AND user2=$2) OR (user1=$2 AND user2=$1);';
-// var updateMostRecent = 'UPDATE rooms SET time=$1 WHERE room=$2;';
-var addNewRoom = 'INSERT INTO rooms VALUES(NULL, $1, $2, CURRENT_TIMESTAMP);';
-var addNewMessage = 'INSERT INTO messages VALUES(NULL, $1, $2, $3, CURRENT_TIMESTAMP);';
-// var getUserId = 'SELECT id FROM rooms WHERE name=$1;';
-
-app.post("/saveMessage", function(request, response) {
-  var q = conn.query(checkChat, [request.session.email, request.body.receiver], function(err, res) {
-  	if (err != null) { console.log(err); }
-  	console.log(res);
-  	if(res.rowCount == 0) {
-  		conn.query(addNewRoom, [request.session.email, request.body.receiver], function(err, res) {
-  			if (err != null) { console.log(err); }
-  			console.log("new room added??");
-  			room = res.lastInsertId;
-  			console.log("last insert id: " + res.lastInsertId);
-  			conn.query(addNewMessage, [room, request.session.email, request.body.body], function(err, res) {
-  				if (err != null) { console.log(err) ;}
-  				response.json({status: "success"});
-  			})
-  		});
-  	} else {
-  		console.log("current room num? " + res.rows[0])
-  		conn.query(addNewMessage, [res])
-  	}
-  })
-})
-
-app.get('/messages', function(request, response) {
-	if (request.session.email) {
-		console.log("messages!!!");
-		var q = conn.query('SELECT * FROM rooms WHERE userEmail1 = $1 OR userEmail2 = $1 ORDERBY time ', [request.session.email], function(error, result) {
-			if (error != null) { console.log(error); }
-			q.on('row', function(row) {
-				console.log(row);
-			})
-		});
-		// q.on('row', function(row){
-	 //   	 var firstRoom = row.name;
-		// });
-		response.render('messages.html', {roomName: ""});
-	} else {
-		response.redirect('/');
-	}
 })
 
 server.listen(8080, function() {

@@ -67,7 +67,7 @@ $(document).ready(function() {
         const html = `
         <div class = "foodPost">
             
-            <a class="userIcon"><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
+            <a class="userIcon"><img class="userPhoto" src=${val.img} alt="profile photo"></a>
             <input id="userEmail" type="hidden" value=${val.email}>
             <ul class="postUser">
                 <li p class="username">${val.name}</li>
