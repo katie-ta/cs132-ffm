@@ -13,7 +13,8 @@ function getPostInfo(postId, currentUser) {
   $.post('/getPostInfo', {postId: postId}, function(response) {
     if (response.available == 0) {
       console.log("NO LONGER AVAILABLE") ;
-    }
+      $(".postTitle").text("POST NO LONGER EXISTS");
+    } else {
     servingSize = response.servingSize;
     console.log(response);
 
@@ -68,6 +69,7 @@ function getPostInfo(postId, currentUser) {
     if (response.servingSize) {
       $("#labels").append("<span id=\"servingSizeTag\" class=\"label label-info\">Serves " + response.servingSize + "</span>&nbsp;");
     }
+  }
 
 
 

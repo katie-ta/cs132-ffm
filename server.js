@@ -81,7 +81,7 @@ app.get('/sign', function(req, res) {
   var s3 = new aws.S3()
   var options = {
     Bucket: S3_BUCKET,
-    Key: unqiue_id,
+    Key: unique_id,
     Expires: 60,
     ContentType: req.query.file_type,
     ACL: 'public-read'
