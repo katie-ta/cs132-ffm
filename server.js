@@ -195,7 +195,6 @@ app.get('/post=:postId', function(request, response) {
 	} else {
 		response.redirect('/login');
 	}
-
 });
 
 app.post('/getPostInfo', function(request, response) {
