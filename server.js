@@ -165,6 +165,31 @@ app.get('/getAllPosts', function(request,response) {
 	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
 	conn.query(q, function(err, result) {
 		// add each post to global posts array to use in sort-by
+		posts = [];//clears out posts so that the posts array wont have multiple copies of the same post each time this get request is made
+		if (err != null) { console.log(err); }
+		console.log("loop entered");
+		console.log("result " + result);
+
+		if (result) {
+			console.log("result rows " + result.rowCount);
+			for (var i = 0; i < result.rowCount; i++) {
+				console.log(result.rows[i].perishable);
+				var post = {
+					id: result.rows[i].id, // assignments
+					title: result.rows[i].title,
+					description: result.rows[i].description,
+					zipcode : result.rows[i].zipcode,
+					createdAt : result.rows[i].createdAt,
+					userName : result.rows[i].userName,
+					userId : result.rows[i].userId
+					}
+				console.log("New JSON Post created");
+
+				posts.push(result.rows[i]);
+			}
+		}
+		console.log("posts" + posts);
+		console.log("result" + result);
 		response.json(result);
 	});
 
@@ -262,34 +287,32 @@ app.post('/getSearchResults', function(request, response){
 
 	if(searchOptions.perishable == 1){
 		console.log("perishable conditional");
-		q += ' AND perishable = "true" ';
+		q += ' AND posts.perishable = "true" ';
 	}
-
+	if(searchOptions.perishable == 0){
+		console.log("perishable conditional");
+		q += ' AND posts.perishable = "false" ';
+	}
 	if (searchOptions.foodType == 'snack'){
 		console.log("snack clicked");
-		q += ' AND type = "snack" '; 
+		q += ' AND posts.type = "snack" '; 
 	}
 
 	if (searchOptions.foodType == 'meal'){
-		q += ' AND type = "meal" '; 
+		q += ' AND posts.type = "meal" '; 
 	}
 
 	if (searchOptions.foodType == 'produce'){
-		q += ' AND type = "produce" ' ; 
+		q += ' AND posts.type = "produce" ' ; 
 	}
 	if(searchOptions.zipcode != 0 ){
 		console.log("zipcode"+ searchOptions.zipcode);
 		console.log("zipcode fired");
-		q += ' AND zipcode == ' + searchOptions.zipcode;
+		q += ' AND posts.zipcode = ' + searchOptions.zipcode;
 
 
 	}
 
-	if(searchOptions.zipcode != 0 ){
-		console.log("zipcode"+ searchOptions.zipcode);
-		console.log("zipcode fired");
-		q += ' AND zipcode = ' + searchOptions.zipcode;
-	}
 
 	var query = conn.query(q, function(error, result){
 		if (error != null) { console.log(error); }
@@ -352,13 +375,44 @@ app.post('/getSearchResults', function(request, response){
 app.get('/sortNewest', function(request, response) {
 	// use sort-by package by npm
 
-	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
-	conn.query(q, function(err, result) {
 		// add each post to global posts array to use in sort-by
-		result.sort(sortBy('createdAt'));
-		response.json(result);
-	});
-	response.render('home.html');
+		console.log(posts);
+		// var parsed = JSON.parse(posts);
+
+		// var arr = [];
+
+		// for(var x in parsed){
+		//   arr.push(parsed[x]);
+		// }
+		posts.sort(sortBy('-createdAt'));
+
+		// var jsonString = JSON.stringify(arr);
+
+		response.json(posts);
+
+	// response.render('home.html');
+})
+
+
+app.get('/sortOldest', function(request, response) {
+	// use sort-by package by npm
+
+		// add each post to global posts array to use in sort-by
+		console.log(posts);
+		// var parsed = JSON.parse(posts);
+
+		// var arr = [];
+
+		// for(var x in parsed){
+		//   arr.push(parsed[x]);
+		// }
+		posts.sort(sortBy('createdAt'));
+
+		// var jsonString = JSON.stringify(arr);
+
+		response.json(posts);
+
+	// response.render('home.html');
 })
 
 app.get('/sortClosest', function(request, response) {
@@ -451,7 +505,8 @@ app.post("/saveMessage", function(request, response) {
   			room = res.lastInsertId;
   			console.log("last insert id: " + res.lastInsertId);
   			conn.query(addNewMessage, [room, request.session.email, request.body.body], function(err, res) {
-  				if (err != null) { console.log(err) ;}
+  				if (err != null)
+  				 { console.log(err) ;}
   				response.json({status: "success"});
   			})
   		});
