@@ -102,7 +102,7 @@ $("#sortByOldest").click(function() {
         const html = `
         <div class = "foodPost">
             
-            <a href="/profile=${val.userId}"><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>  
+            <a href="/profile=${val.userId}"><img class="userPhoto" src="${val.img}" alt="profile photo"></a>  
             <ul class="postUser">
                 <li p class="username"><b>${val.name}</b></li>
                 <li p class="distance">${val.zipcode}</li>
@@ -112,11 +112,11 @@ $("#sortByOldest").click(function() {
               <p class = "description">${description}</p>
               <p>Posted on: ${val.createdAt} </p>
           </div>
-            <input type="image" class="messageButton" src="message-button.png">
-            <input id="userEmail" type="hidden" value=${val.email}>
+            <a href="mailto:${val.email}"><input type="image" class="messageButton" src="message-button.png" ></a>
         </div>`
 
         const $post = $(html);
+        $post.data("email", val.email);
         $('.foodFeed').append($post);
     })
     });
