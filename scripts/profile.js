@@ -24,7 +24,6 @@ $(document).ready(function() {
 
   if (myEmail == userEmail) {
     $('#edit').show();
-
   }
 
 

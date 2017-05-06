@@ -45,8 +45,8 @@
           <p> Are you sure you want to delete this post? </p>
         </div>
         <div class="modal-footer">
-          <button id="delete-post" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
-          <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+          <button id="delete-post" type="button" class="btn btn-success editable" data-dismiss="modal">Yes</button>
+          <button type="button" class="btn btn-success editable" data-dismiss="modal">No</button>
         </div>
       </div>
 
@@ -62,15 +62,15 @@
           </div>
 
           <div class="editButtons">
-            <button id="edit" type="button" class="btn btn=default">Edit</button>
-            <button id="done" type="button" class="btn btn=default">Done</button>
-            <button id="delete" type="button" class="btn btn=default">Delete</button>
+            <button class="editable" id="edit" type="button" class="btn btn=default">Edit</button>
+            <button class="editable" id="done" type="button" class="btn btn=default">Done</button>
+            <button class="editable" id="delete" type="button" class="btn btn=default">Delete</button>
           </div>
 
 
 
           <div class="userInfo">
-            <a class="userIcon"><img class="userPhoto" id="userPhoto" alt="profile photo"></a>
+            <a class="userIcon"><img class="userPhoto" src={{userImg}} id="userPhoto" alt="profile photo"></a>
             <ul class="postUser">
                 <li p class="username"></li>
                 <p class="userDescription"></p>

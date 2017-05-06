@@ -32,8 +32,8 @@ app.use(express.static(__dirname + '/scripts'));
 
 var conn = anyDB.createConnection('sqlite3://ffm.db'); // create database connection
 
-var AWS_ACCESS_KEY = "AKIAJARZ3SQBYJJHKWFQ"
-var AWS_SECRET_KEY = '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'
+var AWS_ACCESS_KEY = "AKIAJAX2SM3N5PX4PTYA"
+var AWS_SECRET_KEY = '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'
 var S3_BUCKET = 'freefoodmvment'
 
 // stuff to use for bcrypt password encryptions
@@ -75,13 +75,13 @@ function generateImgUrl(id) {
 
 app.get('/sign', function(req, res) {
   aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
-  
+
   var unique_id = uniqid();
   console.log("unique id : " + unique_id);
   var s3 = new aws.S3()
   var options = {
     Bucket: S3_BUCKET,
-    Key: unique_id,
+    Key: unqiue_id,
     Expires: 60,
     ContentType: req.query.file_type,
     ACL: 'public-read'
@@ -205,31 +205,6 @@ app.get('/getAllPosts', function(request,response) {
 	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.img, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
 	conn.query(q, function(err, result) {
 		// add each post to global posts array to use in sort-by
-		posts = [];//clears out posts so that the posts array wont have multiple copies of the same post each time this get request is made
-		if (err != null) { console.log(err); }
-		console.log("loop entered");
-		console.log("result " + result);
-
-		if (result) {
-			console.log("result rows " + result.rowCount);
-			for (var i = 0; i < result.rowCount; i++) {
-				console.log(result.rows[i].perishable);
-				var post = {
-					id: result.rows[i].id, // assignments
-					title: result.rows[i].title,
-					description: result.rows[i].description,
-					zipcode : result.rows[i].zipcode,
-					createdAt : result.rows[i].createdAt,
-					userName : result.rows[i].userName,
-					userId : result.rows[i].userId
-					}
-				console.log("New JSON Post created");
-
-				posts.push(result.rows[i]);
-			}
-		}
-		console.log("posts" + posts);
-		console.log("result" + result);
 		response.json(result);
 	});
 
@@ -260,7 +235,6 @@ app.get('/post=:postId', function(request, response) {
 	} else {
 		response.redirect('/login');
 	}
-
 });
 
 app.post('/getPostInfo', function(request, response) {
@@ -348,23 +322,20 @@ app.post('/getSearchResults', function(request, response){
 
 	if(searchOptions.perishable == 1){
 		console.log("perishable conditional");
-		q += ' AND posts.perishable = "true" ';
+		q += ' AND perishable = "true" ';
 	}
-	if(searchOptions.perishable == 0){
-		console.log("perishable conditional");
-		q += ' AND posts.perishable = "false" ';
-	}
+
 	if (searchOptions.foodType == 'snack'){
 		console.log("snack clicked");
-		q += ' AND posts.type = "snack" '; 
+		q += ' AND type = "snack" ';
 	}
 
 	if (searchOptions.foodType == 'meal'){
-		q += ' AND posts.type = "meal" '; 
+		q += ' AND type = "meal" ';
 	}
 
 	if (searchOptions.foodType == 'produce'){
-		q += ' AND posts.type = "produce" ' ; 
+		q += ' AND type = "produce" ' ;
 	}
 	if(searchOptions.zipcode != 0 ){
 		console.log("zipcode"+ searchOptions.zipcode);
@@ -439,49 +410,74 @@ app.get('/sortNewest', function(request, response) {
 	var q = 'select * from posts where available = 1;';
 	conn.query(q, function(err, result) {
 		// add each post to global posts array to use in sort-by
-		console.log(posts);
-		// var parsed = JSON.parse(posts);
-
-		// var arr = [];
-
-		// for(var x in parsed){
-		//   arr.push(parsed[x]);
-		// }
-		posts.sort(sortBy('-createdAt'));
-
-		// var jsonString = JSON.stringify(arr);
-
-		response.json(posts);
-
-	// response.render('home.html');
+		result.sort(sortBy('createdAt'));
+		response.json(result);
+	});
+	response.render('home.html');
 })
 
+function sortLocations(zipcodes, current) {
+  function dist(z) {
+  	let key = "PAdMI2aJADbKcHNNHOrJoiqMYuekK5fAFtmoww879kRm1F9ItAsSSTERoTb8YrIE"
+  	console.log("current " + current);
+  	console.log("z.zipcode " + z.zipcode);
+  	let url = "https://www.zipcodeapi.com/rest/" + key + "/distance.json/" + current +  "/" + z.zipcode +"/km"
+    console.log("url : " + url);
+    app.get(url, function(request, response) {
+    	console.log(response);
+    	console.log("distance from " + current + " to " + z + ": " + response.distance);
+    	return response.distance;
+    })
+  }
 
-app.get('/sortOldest', function(request, response) {
-	// use sort-by package by npm
-
-		// add each post to global posts array to use in sort-by
-		console.log(posts);
-		// var parsed = JSON.parse(posts);
-
-		// var arr = [];
-
-		// for(var x in parsed){
-		//   arr.push(parsed[x]);
-		// }
-		posts.sort(sortBy('createdAt'));
-
-		// var jsonString = JSON.stringify(arr);
-
-		response.json(posts);
-
-	// response.render('home.html');
-})
+  zipcodes.sort(function(z1, z2) {
+    return dist(z1) - dist(z2);
+  });
+}
 
 app.get('/sortClosest', function(request, response) {
 	// use sort-by package by npm
+	if (request.session) {
 
-	response.render('home.html');
+		let currZipcode = request.session.zipcode;
+
+		let key = "PAdMI2aJADbKcHNNHOrJoiqMYuekK5fAFtmoww879kRm1F9ItAsSSTERoTb8YrIE"
+			let url = "https://www.zipcodeapi.com/rest/" + key + "/distance.json/" + currZipcode +  "/" + 92692 +"/km"
+		  console.log("url : " + url);
+		app.get(url, function(request, response) {
+			console.log("response" + response);
+			console.log("distance from " + current + " to " + z + ": " + response.distance);
+			// return response.distance;
+		})
+		console.log('curr zip ' + currZipcode);
+		var q = 'select zipcode from posts where available = 1;';
+		conn.query(q, function(err, result) {
+			// add each post to global posts array to use in sort-by
+			console.log(result.rows);
+			result.rows.forEach(function(z) {
+				console.log("zipcode z " + z.zipcode);
+				let key = "PAdMI2aJADbKcHNNHOrJoiqMYuekK5fAFtmoww879kRm1F9ItAsSSTERoTb8YrIE"
+					let url = "https://www.zipcodeapi.com/rest/" + key + "/distance.json/" + currZipcode +  "/" + z.zipcode +"/km"
+				  console.log("url : " + url);
+				app.get(url, function(request, response) {
+					console.log(request);
+					console.log(response);
+					console.log("distance from " + current + " to " + z + ": " + response.distance);
+					// return response.distance;
+				})
+			})
+			for (let i = 0; i < result.rowCount; i ++) {
+
+			}
+ 			// console.log("sorting? : " + sortLocations(result.rows, currZipcode));
+			// console.log(result);
+			response.json(result.rows);
+		});
+
+	}
+
+
+	// response.render('home.html');
 })
 
 // get request for profile.html (for someone's profile)
@@ -550,6 +546,6 @@ app.post('/updateUserInfo', function(request, response) {
 	})
 })
 
-server.listen(8080, function() {
+server.listen(8000, function() {
   console.log("Listening on port 8080");
 });
