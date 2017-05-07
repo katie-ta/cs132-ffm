@@ -119,7 +119,7 @@ $(document).ready(function() {
   $('#done').hide();
   $('#delete').hide();
   $('#types').hide();
-  $('.editable').hide();
+  $('.edits').hide();
   $('.messageButton').hide();
   $('.test').hide();
   console.log(" post id!!! : " + $('meta[name=postId]').attr("content"));
@@ -148,7 +148,7 @@ $(document).ready(function() {
     $('#labels').hide();
     $('#postedOn').hide();
     $('#types').show();
-    $('.editable').show();
+    $('.edits').show();
     $('.test').show();
     $('.postImage').show();
       var $description=$('#description'), isEditable=$description.is('.editable');
@@ -190,9 +190,9 @@ $(document).ready(function() {
     $('#labels').show();
     $('#postedOn').show();
     $('#types').hide();
-    $('.editable').hide();
+    $('.edits').hide();
     $('.test').hide();
-    $('.postImage').hide();
+    // $('.postImage').show();
       var $description=$('#description'), isEditable=$description.is('.editable');
       $description.prop('contenteditable',!isEditable).toggleClass('editable');
 
@@ -230,6 +230,12 @@ $(document).ready(function() {
           perishable = false;
           $("#perishableTag").text("Non-Perishable");
       }
+
+
+      if (!$('#img1').attr('src')) { $('#img1').hide() }
+      if (!$('#img2').attr('src')) { $('#img2').hide() }
+      if (!$('#img3').attr('src')) { $('#img3').hide() }
+      if (!$('#img4').attr('src')) { $('#img4').hide() }
 
       console.log($('#description').text());
       var edits = {
