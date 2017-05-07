@@ -26,7 +26,7 @@
             <div id="personal">
                 <a href="/myProfile" id="profileheader"><img id="profilePhoto" src={{userImg}} alt="profile photo"></a>
             </div>
-            <a href="/logout" class="btn btn-info btn-lg">
+            <a href="/logout" id="styled-button" class="btn btn-info btn-lg">
                       <span class="glyphicon glyphicon-log-out"></span> Log out</a>
     </div>
     </header>
@@ -56,6 +56,7 @@
     <div class = "container">
         <h1 class="postTitle" style="margin-left:10%;"></h1>
         <div id="createPost">
+          <a href="mailto:${val.email}"><input type="image" class="messageButton" src="message-button.png" ></a>
 
           <div class="label" id="labels">
 
@@ -64,7 +65,7 @@
           <div class="editButtons">
             <button id="edit" type="button" class="btn btn=default">Edit</button>
             <button id="done" type="button" class="btn btn=default">Done</button>
-            <button id="delete" type="button" class="btn btn=default">Delete</button>
+            <button id="delete" type="button" class="btn btn=default">Delete Post</button>
           </div>
 
 
@@ -120,17 +121,36 @@
             <h5><b>Posted On: </b></h5>
             <p id="createdAt"></p>
           </div>
+            <img id="img1" class="postImage rounded" alt="img1">
+            <label class="editable btn btn-default btn-file">
+              Upload New <input type="file" style="display: none;" id="upload1">
+            </label>
+            <button type="button" class="editable btn id-inline" id="delete1">Remove</button>
+            <p class="test"></p>
+          <img id="img2" class="postImage rounded " alt="img2">
+          <label class="editable btn btn-default btn-file">
+            Upload New<input type="file" style="display: none;" id="upload2">
+          </label>
+          <button type="button" class="editable btn id-inline" id="delete2">Remove</button>
+          <p class="test"></p>
 
-          <img id="img1" class="postImage rounded float-left" alt="img1">
-          <input type="file" class="editable imageUpload" id="upload1">
-          <img id="img2" class="postImage rounded float-right " alt="img2">
-          <input type="file" class="editable imageUpload" id="upload2">
-          <img id="img3" class="postImage rounded float-left" alt="img3">
-          <input type="file" class="editable imageUpload" id="upload3">
-          <img id="img4" class="postImage rounded float-right" alt="img4">
-          <input type="file" class="editable imageUpload" id="upload4">
+          <img id="img3" class="postImage rounded" alt="img3">
+          <label class="editable btn btn-default btn-file">
+            Upload New<input type="file" style="display: none;" id="upload3">
+          </label>
+          <button type="button" class="editable btn id-inline" id="delete3">Remove</button>
+          <p class="test" ></p>
 
+          <img id="img4" class="postImage rounded" alt="img4">
+          <label class="editable btn btn-default btn-file">
+            Upload New<input type="file" style="display: none;" id="upload4">
+          </label>
+          <button type="button" class="editable btn id-inline" id="delete4">Remove</button>
+          <p class="test"></p>
+
+        </div>
           </div>
+
 
           <div id="imgModal" class="modal">
             <!-- The Close Button -->

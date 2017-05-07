@@ -20,9 +20,7 @@ function uploadImage(image, preview) {
       sign_response = response;
       upload(file, response.signed_request, response.url, function() {
         console.log("response: "+ response.url);
-        globalVar = response.url;
         $(preview).attr("src",response.url);
-        console.log("src!!!!!!!" + $(preview).attr('src'))
       })
     })
 }
@@ -39,6 +37,9 @@ function getPostInfo(postId, currentUser) {
     if (response.email == currentUser) {
       $('#edit').show();
       $('#delete').show()
+
+    } else {
+      $('.messageButton').show();
     }
 
     if (response.img1) {
@@ -50,7 +51,7 @@ function getPostInfo(postId, currentUser) {
     } else {
       $("#img2").hide();
     }
-    if (response.img3 != "") {
+    if (response.img3) {
       $("#img3").attr('src', response.img3);
     } else {
       $("#img3").hide();
@@ -119,6 +120,8 @@ $(document).ready(function() {
   $('#delete').hide();
   $('#types').hide();
   $('.editable').hide();
+  $('.messageButton').hide();
+  $('.test').hide();
   console.log(" post id!!! : " + $('meta[name=postId]').attr("content"));
   console.log(" current user: " + currentUser);
 
@@ -128,6 +131,11 @@ $(document).ready(function() {
   $('#img2').click(function() { displayModal(this.src); })
   $('#img3').click(function() { displayModal(this.src); })
   $('#img4').click(function() { displayModal(this.src); })
+
+  $('#delete1').click(function() { $('#img1').attr('src', null)})
+  $('#delete2').click(function() { $('#img2').attr('src', null)})
+  $('#delete3').click(function() { $('#img3').attr('src', null)})
+  $('#delete4').click(function() { $('#img4').attr('src', null)})
 
   $('#delete').click(function() { $('#myModal').modal("show"); });
 
@@ -141,6 +149,8 @@ $(document).ready(function() {
     $('#postedOn').hide();
     $('#types').show();
     $('.editable').show();
+    $('.test').show();
+    $('.postImage').show();
       var $description=$('#description'), isEditable=$description.is('.editable');
       $description.prop('contenteditable',!isEditable).toggleClass('editable');
 
@@ -154,7 +164,6 @@ $(document).ready(function() {
         uploadImage('#upload1', '#img1');
         $('#img1').show();
         img1 = $('#img1').attr('src');
-        console.log("img 1" + img1);
     	})
 
       $('#upload2').change(function() {
@@ -166,7 +175,6 @@ $(document).ready(function() {
       $('#upload3').change(function() {
         uploadImage('#upload3', '#img3');
         $('#img3').show();
-
     	})
 
       $('#upload4').change(function() {
@@ -182,6 +190,9 @@ $(document).ready(function() {
     $('#labels').show();
     $('#postedOn').show();
     $('#types').hide();
+    $('.editable').hide();
+    $('.test').hide();
+    $('.postImage').hide();
       var $description=$('#description'), isEditable=$description.is('.editable');
       $description.prop('contenteditable',!isEditable).toggleClass('editable');
 

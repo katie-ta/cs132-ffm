@@ -32,7 +32,7 @@ $("#sortByOldest").click(function() {
               <p>Posted on: ${response[i].createdAt} </p>
           </div>
             <input type="image" class="messageButton" src="message-button.png">
-            <input id="userEmail" type="hidden" response[i]ue=${response[i].email}>
+            <a href="mailto:${response[i].email}"><input type="image" class="messageButton" src="message-button.png" ></a>
         </div>`
 
         const $post = $(html);
@@ -75,8 +75,7 @@ $("#sortByOldest").click(function() {
               <p class = "description">${description}</p>
               <p>Posted on: ${response[i].createdAt} </p>
           </div>
-            <input type="image" class="messageButton" src="message-button.png">
-            <input id="userEmail" type="hidden" response[i]ue=${response[i].email}>
+            <a href="mailto:${response[i].email}"><input type="image" class="messageButton" src="message-button.png" ></a>
         </div>`
 
         const $post = $(html);
