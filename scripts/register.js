@@ -64,10 +64,12 @@ $(document).ready(function() {
 				if(response.status == "success") {
 						window.location = "/";
 				} else if (response.status == "invalid email") {
-					$.alert(response.status);
+					alert("Email already exists!");
 				}
 				console.log(response.status);
 			})
+		} else {
+			alert("Please enter all required fields!");
 		}
 
 

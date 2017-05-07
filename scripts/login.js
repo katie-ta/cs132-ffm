@@ -4,18 +4,27 @@ $(document).ready(function() {
 		var password = $('#password').val();
 		console.log(email);
 		console.log(password);
-		$.post("/checkLogin", {email: email, password: password}, function(response) {
-			console.log(response.status);
-			if (response.status === "success") {
-				$.get("/", function(req,response) {
-					window.location = "/";
-				})
-			}
-		});
-	})
 
-	$('#noaccount').on("click", function() {
-		window.location = "/register";
-	})
+		if (email == "") {
+			alert("Please enter an email!");
+		}
 
+		if (password == "") {
+			alert("Please enter a password!");
+		}
+
+		if (email !== "" && password != "") {
+			$.post("/checkLogin", {email: email, password: password}, function(response) {
+				console.log(response.status);
+				if (response.status === "success") {
+					$.get("/", function(req,response) {
+						window.location = "/";
+					})
+				} else if (response.status === "login does not exist") {
+					alert("Email does not exist!");
+				}
+			});
+		}
+
+	})
 });

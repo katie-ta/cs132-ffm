@@ -20,33 +20,33 @@
 
         <div class="basic-info">
             <div class="form-group">
-            <label for="email">First name:</label>
+            <label for="email">*First name:</label>
               <input id="name" type="text" class="form-control">
             </div>
 
             <div class="form-group">
-            <label for="email">Email:</label>
+            <label for="email">*Email:</label>
               <input id="email" type="email" class="form-control">
             </div>
 
             <div class="form-group">
-              <label for="pwd">Password:</label>
+              <label for="pwd">*Password:</label>
               <input id="password" type="password" class="form-control">
               </div>
 
           </div>
 
-          <p id="medialink-instruct">Enter at least one social media link.</p>
+          <!-- <p id="medialink-instruct">Enter at least one social media link.</p> -->
 
           <div class="socmedia">
 
             <div class="form-group socmedia-links">
-              <label for="pwd">Facebook:</label>
+              <label for="pwd">Facebook URL:</label>
               <input id="facebook" type="url" class="form-control">
               </div>
 
             <div class="form-group socmedia-links">
-              <label for="pwd">Instagram:</label>
+              <label for="pwd">Instagram URL:</label>
               <input id="instagram" type="url" class="form-control">
 
           </div>
@@ -57,14 +57,11 @@
 
           <div class="upload-container">
             <p id="upload-instructions">Upload a photo of yourself:</p>
-            <a id="upload-btn" class='btn btn-primary'>
-                <input type="file" id="image">
-            </a>
+            <label class="editable btn btn-primary btn-file">
+              Choose File<input type="file" style="display: none;" id="image">
+            </label>
           </div>
           <img class="preview">
-
-
-
 
         <input id="create-btn" type="submit" class="btn btn-info sign-btn" value="Create Account">
 

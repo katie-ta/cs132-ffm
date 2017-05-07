@@ -139,6 +139,7 @@ app.post('/newLogin', function(request, response) {
 			})
 		} else {
 			// email already exists
+      console.log("email already exists");
 			response.json({status: "invalid email"});
 		}
 	})
