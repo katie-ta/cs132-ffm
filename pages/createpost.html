@@ -47,7 +47,7 @@
 
 
           <form>
-              <p>Perishable?</p>
+              <p><b>Perishable?</b></p>
             <label class="radio-inline">
               <input id="perishable" type="radio" name="optradio">Perishable
             </label>
@@ -57,7 +57,7 @@
           </form>
 
           <form>
-            <p>Type of food?</p>
+            <p><b>Type of food?</b></p>
             <label class="radio-inline">
               <input id="snack" type="radio" name="optradio">Snack
             </label>
@@ -81,6 +81,19 @@
              <label  for="description">Enter a short description.</label>
             <textarea id="description" class="form-control" rows="3" placeholder="Say a few sentences about the food, where it's from, potential allergies, etc."></textarea>
           </div>
+
+          <div class="upload-container">
+            <p><b>Upload up to 4 photos: </b></p>
+            <input type="file" class="imageUpload" id="image1">
+            <img class="preview"  id="preview1">
+            <input type="file" class="imageUpload" id="image2">
+            <img class="preview" id="preview2">
+            <input type="file" class="imageUpload" id="image3">
+            <img class="preview" id="preview3">
+            <input type="file" class="imageUpload" id="image4">
+            <img class="preview" id="preview4">
+          </div>
+          <img class="preview">
           <input id="submit-btn" type="submit" class="btn btn-info" value="Submit">
       </div>
     </div>

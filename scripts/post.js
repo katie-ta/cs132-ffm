@@ -1,4 +1,5 @@
 var servingSize;
+var img1, img2, img3, img4;
 
 function deletePost(postId) {
   $.post('/deletePost', {postId: postId}, function(request, response) {
@@ -7,6 +8,23 @@ function deletePost(postId) {
       window.location = "/";
     }
   })
+}
+
+function uploadImage(image, preview) {
+  console.log(image);
+  var file = $(image)[0].files[0]
+    if (!file) return
+
+    sign_request(file, function(response) {
+      console.log("signing request??");
+      sign_response = response;
+      upload(file, response.signed_request, response.url, function() {
+        console.log("response: "+ response.url);
+        globalVar = response.url;
+        $(preview).attr("src",response.url);
+        console.log("src!!!!!!!" + $(preview).attr('src'))
+      })
+    })
 }
 
 function getPostInfo(postId, currentUser) {
@@ -23,15 +41,30 @@ function getPostInfo(postId, currentUser) {
       $('#delete').show()
     }
 
+    if (response.img1) {
+      $("#img1").attr('src', response.img1);
+    } else { $('#img1').hide(); }
 
+    if (response.img2) {
+      $("#img2").attr('src', response.img2);
+    } else {
+      $("#img2").hide();
+    }
+    if (response.img3 != "") {
+      $("#img3").attr('src', response.img3);
+    } else {
+      $("#img3").hide();
+    }
+
+    if (response.img4) {
+      $("#img4").attr('src', response.img4);
+    } else {
+      $("#img4").hide();
+    }
     $(".postTitle").text(response.title);
-
     $("#description").text("" + response.description);
-
     $("#zipcode").text(response.zipcode);
-
     $(".username").text(response.name);
-
     $("#servingSize").val(response.servingSize);
 
     // $(".userDescription").text(response.description);
@@ -70,11 +103,12 @@ function getPostInfo(postId, currentUser) {
       $("#labels").append("<span id=\"servingSizeTag\" class=\"label label-info\">Serves " + response.servingSize + "</span>&nbsp;");
     }
   }
-
-
-
-
   })
+}
+
+function displayModal(url) {
+  $("#imgModal").modal("show");
+  $('.modal-content').attr('src', url);
 }
 
 $(document).ready(function() {
@@ -84,20 +118,20 @@ $(document).ready(function() {
   $('#done').hide();
   $('#delete').hide();
   $('#types').hide();
-
+  $('.editable').hide();
   console.log(" post id!!! : " + $('meta[name=postId]').attr("content"));
   console.log(" current user: " + currentUser);
 
   getPostInfo(postId, currentUser);
 
-  $('#delete').click(function() {
-    $("#error").html("You Clicked on Click here Button");
-      $('#myModal').modal("show");
-    });
+  $('#img1').click(function() { displayModal(this.src); })
+  $('#img2').click(function() { displayModal(this.src); })
+  $('#img3').click(function() { displayModal(this.src); })
+  $('#img4').click(function() { displayModal(this.src); })
 
-  $('#delete-post').click(function() {
-    deletePost(postId);
-  });
+  $('#delete').click(function() { $('#myModal').modal("show"); });
+
+  $('#delete-post').click(function() { deletePost(postId); });
 
   $('#edit').on("click", function() {
     console.log("edit clicked");
@@ -106,6 +140,7 @@ $(document).ready(function() {
     $('#labels').hide();
     $('#postedOn').hide();
     $('#types').show();
+    $('.editable').show();
       var $description=$('#description'), isEditable=$description.is('.editable');
       $description.prop('contenteditable',!isEditable).toggleClass('editable');
 
@@ -115,6 +150,29 @@ $(document).ready(function() {
       var $title=$('.postTitle'), isEditable=$title.is('.editable');
       $title.prop('contenteditable', !isEditable).toggleClass('editable');
 
+      $('#upload1').change(function() {
+        uploadImage('#upload1', '#img1');
+        $('#img1').show();
+        img1 = $('#img1').attr('src');
+        console.log("img 1" + img1);
+    	})
+
+      $('#upload2').change(function() {
+        uploadImage('#upload2', '#img2');
+        $('#img2').show();
+
+    	})
+
+      $('#upload3').change(function() {
+        uploadImage('#upload3', '#img3');
+        $('#img3').show();
+
+    	})
+
+      $('#upload4').change(function() {
+        uploadImage('#upload4', '#img4');
+        $('#img4').show();
+    	})
   })
 
   $('#done').on("click", function() {
@@ -152,9 +210,7 @@ $(document).ready(function() {
           type = "meal";
           $("#mealTag").text("Meal");
       }
-
       if($('#perishable').is(':checked')) {
-          console.log("perishable");
           $("#perishableTag").text("Perishable");
           perishable = true;
       }
@@ -172,7 +228,11 @@ $(document).ready(function() {
         title: $('.postTitle').text(),
         type: type,
         perishable: perishable,
-        servingSize: servingSize
+        servingSize: servingSize,
+        img1: $('#img1').attr('src'),
+        img2: $('#img2').attr('src'),
+        img3: $('#img3').attr('src'),
+        img4: $('#img4').attr('src')
       }
       console.log(edits);
       $.post('/updatePostInfo', edits, function(request, response) {

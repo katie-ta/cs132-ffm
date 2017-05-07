@@ -42,17 +42,17 @@ const myPlaintextPassword = 's0/\/\P4$$w0rD';
 const someOtherPlaintextPassword = 'not_bacon';
 
 // create message table
-const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room INTEGER, user TEXT, body TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
+// const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room INTEGER, user TEXT, body TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
 const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT, description TEXT, img TEXT)';
-const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN)';
-const createRoomsTable = 'CREATE TABLE IF NOT EXISTS rooms (id INTEGER PRIMARY KEY, user1 TEXT, user2 TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
+const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN, img1 TEXT, img2 TEXT, img3 TEXT, img4 TEXT)';
+// const createRoomsTable = 'CREATE TABLE IF NOT EXISTS rooms (id INTEGER PRIMARY KEY, user1 TEXT, user2 TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
 
 app.use(session({secret: 'freefoodmovementsecretsecretthing'}));
 
 // create all table
-conn.query( createMessageTable , function(error, data){
-  if (error != null) { console.log(error); }
-});
+// conn.query( createMessageTable , function(error, data){
+//   if (error != null) { console.log(error); }
+// });
 
 conn.query( createUserTable , function(error, data){
   if (error != null) { console.log(error); }
@@ -62,9 +62,9 @@ conn.query( createPostTable , function(error, data){
   if (error != null) { console.log(error); }
 });
 
-conn.query( createRoomsTable , function(error, data){
-  if (error != null) { console.log(error); }
-});
+// conn.query( createRoomsTable , function(error, data){
+//   if (error != null) { console.log(error); }
+// });
 
 var sess;
 
@@ -263,14 +263,18 @@ app.post('/savepost', function(request, response) {
 	const perishable = request.body.perishable;
 	const type = request.body.type;
 	const zipcode = request.body.zipcode;
+  const img1 = request.body.img1;
+  const img2 = request.body.img2;
+  const img3 = request.body.img3;
+  const img4 = request.body.img4;
 	console.log(description);
 	console.log(title);
 	console.log(createdAt);
 	console.log(zipcode);
 
-  	const q = 'INSERT INTO posts(userEmail, title, description, createdAt, servingSize, perishable, type, zipcode, available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+  	const q = 'INSERT INTO posts(userEmail, title, description, createdAt, servingSize, perishable, type, zipcode, available, img1, img2, img3, img4) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)';
   	conn.query(q, [request.session.email,  title, description,
-  		createdAt, servingSize, perishable, type, zipcode, true], function(error, result) {
+  		createdAt, servingSize, perishable, type, zipcode, true, img1, img2, img3, img4], function(error, result) {
         if (error != null) { console.log(error); }
         response.json({status: "success"});
       });
@@ -280,8 +284,9 @@ app.post('/savepost', function(request, response) {
 app.post('/updatePostInfo', function(request, response) {
   console.log("UPDATES: ");
   console.log(request.body);
-  var sql = 'UPDATE posts SET description = ?, zipcode = ?, type = ?, perishable = ?, servingSize = ? WHERE id = ?';
-  conn.query(sql, [request.body.description, request.body.zipcode, request.body.type, request.body.perishable, request.body.servingSize, request.body.postId], function(error, result) {
+  var sql = 'UPDATE posts SET description = ?, zipcode = ?, type = ?, perishable = ?, servingSize = ?, img1 = ?, img2 = ?, img3 = ?, img4 = ? WHERE id = ?';
+  conn.query(sql, [request.body.description, request.body.zipcode, request.body.type, request.body.perishable, request.body.servingSize,
+  request.body.img1, request.body.img2, request.body.img3, request.body.img4,request.body.postId], function(error, result) {
     if (error != null) { console.log(error); }
     response.json({status: "success"});
   })
