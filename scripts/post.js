@@ -1,5 +1,8 @@
 var servingSize;
 var img1, img2, img3, img4;
+var monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
 
 function deletePost(postId) {
   $.post('/deletePost', {postId: postId}, function(request, response) {
@@ -34,9 +37,9 @@ function getPostInfo(postId, currentUser) {
     servingSize = response.servingSize;
     console.log(response);
 
-    if (response.email == currentUser) {
+    if (response.userEmail == currentUser) {
       $('#edit').show();
-      $('#delete').show()
+      $('#delete').show();
 
     } else {
       $('.messageButton').show();
@@ -67,10 +70,30 @@ function getPostInfo(postId, currentUser) {
     $("#zipcode").text(response.zipcode);
     $(".username").text(response.name);
     $("#servingSize").val(response.servingSize);
+    $('#messageButton').attr('href', "mailto:" + response.userEmail);
+    $('.userIcon').attr('href', "/profile=" + response.userId);
 
     // $(".userDescription").text(response.description);
+    console.log("created at :" + response.createdAt);
+    let split = response.createdAt.split(" ");
+    let time = split[1].split(":");
+    let date = split[0].split("-");
+    let hour = time[0];
+    let minutes = time[1];
+    let end = "am"
 
-    $("#createdAt").text(response.createdAt);
+    if (hour > 12) {
+      hour = hour - 12;
+      end = "pm";
+    }
+
+    console.log("time : " + hour + ":" + minutes + end);
+    console.log("date : " + monthNames[date[1] - 1] + "-" + date[2] + "-" + date[0]);
+
+    $("#createdAt").text(formatDate(response.createdAt));
+
+
+
     console.log("perishable? " + response.perishable);
     if (response.perishable == "true") {
       $("#labels").append("<span id=\"perishableTag\" class=\"label label-primary\">Perishable</span>&nbsp;");
@@ -119,7 +142,7 @@ $(document).ready(function() {
   $('#done').hide();
   $('#delete').hide();
   $('#types').hide();
-  $('.editable').hide();
+  $('.edits').hide();
   $('.messageButton').hide();
   $('.test').hide();
   console.log(" post id!!! : " + $('meta[name=postId]').attr("content"));
@@ -148,7 +171,7 @@ $(document).ready(function() {
     $('#labels').hide();
     $('#postedOn').hide();
     $('#types').show();
-    $('.editable').show();
+    $('.edits').show();
     $('.test').show();
     $('.postImage').show();
       var $description=$('#description'), isEditable=$description.is('.editable');
@@ -190,7 +213,7 @@ $(document).ready(function() {
     $('#labels').show();
     $('#postedOn').show();
     $('#types').hide();
-    $('.editable').hide();
+    $('.edits').hide();
     $('.test').hide();
     $('.postImage').hide();
       var $description=$('#description'), isEditable=$description.is('.editable');

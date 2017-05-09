@@ -19,7 +19,7 @@ $("#sortByOldest").click(function() {
         const html = `
         <div class = "foodPost">
 
-            <a href="/profile=${response[i].userId}"><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
+            <a href="/profile=${response[i].userId}"><img class="userPhoto" src="${response[i].img}" alt="profile photo"></a>
             <input id="userEmail" type="hidden" response[i]ue=${response[i].email}>
             <ul class="postUser">
                 <li p class="username"><b>${response[i].name}</b></li>
@@ -29,9 +29,8 @@ $("#sortByOldest").click(function() {
               <a href="/post=${response[i].id}"><p class = "food">${response[i].title}</p></a>
               <input id="postId" type="hidden" response[i]ue=${response[i].id}>
               <p class = "description">${description}</p>
-              <p>Posted on: ${response[i].createdAt} </p>
+              <p>Posted on: ${formatDate(response[i].createdAt)} </p>
           </div>
-            <input type="image" class="messageButton" src="message-button.png">
             <a href="mailto:${response[i].email}"><input type="image" class="messageButton" src="message-button.png" ></a>
         </div>`
 
@@ -63,7 +62,7 @@ $("#sortByOldest").click(function() {
         const html = `
         <div class = "foodPost">
 
-            <a href="/profile=${response[i].userId}"><img class="userPhoto" src="katie.jpg" alt="profile photo"></a>
+            <a href="/profile=${response[i].userId}"><img class="userPhoto" src="${response[i].img}" alt="profile photo"></a>
             <input id="userEmail" type="hidden" response[i]ue=${response[i].email}>
             <ul class="postUser">
                 <li p class="username"><b>${response[i].name}</b></li>
@@ -73,7 +72,7 @@ $("#sortByOldest").click(function() {
               <a href="/post=${response[i].id}"><p class = "food">${response[i].title}</p></a>
               <input id="postId" type="hidden" response[i]ue=${response[i].id}>
               <p class = "description">${description}</p>
-              <p>Posted on: ${response[i].createdAt} </p>
+              <p>Posted on: ${formatDate(response[i].createdAt)} </p>
           </div>
             <a href="mailto:${response[i].email}"><input type="image" class="messageButton" src="message-button.png" ></a>
         </div>`
@@ -109,7 +108,7 @@ $("#sortByOldest").click(function() {
           <div class="foodText">
               <a href="/post=${val.id}"><p class = "food">${val.title}</p></a>
               <p class = "description">${description}</p>
-              <p>Posted on: ${val.createdAt} </p>
+              <p>Posted on: ${formatDate(val.createdAt)} </p>
           </div>
             <a href="mailto:${val.email}"><input type="image" class="messageButton" src="message-button.png" ></a>
         </div>`

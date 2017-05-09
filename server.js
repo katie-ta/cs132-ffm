@@ -32,8 +32,8 @@ app.use(express.static(__dirname + '/scripts'));
 
 var conn = anyDB.createConnection('sqlite3://ffm.db'); // create database connection
 
-var AWS_ACCESS_KEY = "AKIAJAX2SM3N5PX4PTYA"
-var AWS_SECRET_KEY = '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'
+var AWS_ACCESS_KEY = ""
+var AWS_SECRET_KEY = ''
 var S3_BUCKET = 'freefoodmvment'
 
 // stuff to use for bcrypt password encryptions
@@ -43,8 +43,8 @@ const someOtherPlaintextPassword = 'not_bacon';
 
 // create message table
 // const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room INTEGER, user TEXT, body TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
-const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode INTEGER, email TEXT, facebook TEXT, instagram TEXT, description TEXT, img TEXT)';
-const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode INTEGER, available BOOLEAN, img1 TEXT, img2 TEXT, img3 TEXT, img4 TEXT)';
+const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode TEXT, email TEXT, facebook TEXT, instagram TEXT, description TEXT, img TEXT)';
+const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode TEXT, available BOOLEAN, img1 TEXT, img2 TEXT, img3 TEXT, img4 TEXT)';
 // const createRoomsTable = 'CREATE TABLE IF NOT EXISTS rooms (id INTEGER PRIMARY KEY, user1 TEXT, user2 TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
 
 app.use(session({secret: 'freefoodmovementsecretsecretthing'}));
@@ -166,6 +166,7 @@ app.post('/checkLogin', function(request, response) {
 		} else {
 				var hash = result.rows[0].password;
 				console.log(hash);
+				console.log("password : " + password);
 				bcrypt.compare(password, hash, function(err, res) {
 			    	// res == true
 			    	console.log(res);
@@ -206,6 +207,33 @@ app.get('/getAllPosts', function(request,response) {
 	var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.img, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
 	conn.query(q, function(err, result) {
 		// add each post to global posts array to use in sort-by
+		posts = [];//clears out posts so that the posts array wont have multiple copies of the same post each time this get request is made
+		if (err != null) { console.log(err); }
+		console.log("loop entered");
+		console.log("result " + result);
+
+		if (result) {
+			console.log("result rows " + result.rowCount);
+			for (var i = 0; i < result.rowCount; i++) {
+				console.log(result.rows[i].perishable);
+				var post = {
+					id: result.rows[i].id, // assignments
+					title: result.rows[i].title,
+					description: result.rows[i].description,
+					zipcode : result.rows[i].zipcode,
+					createdAt : result.rows[i].createdAt,
+					userName : result.rows[i].userName,
+					userId : result.rows[i].userId,
+					userEmail: result.rows[i].email,
+					img: result.rows[i].img
+					}
+				console.log("New JSON Post created");
+
+				posts.push(result.rows[i]);
+			}
+		}
+		console.log("posts" + posts);
+		console.log("result" + result);
 		response.json(result);
 	});
 
@@ -239,7 +267,7 @@ app.get('/post=:postId', function(request, response) {
 });
 
 app.post('/getPostInfo', function(request, response) {
-	const sql = 'select * from users, posts where posts.id = $1 and posts.userEmail = users.email'
+	const sql = 'select posts.*, users.id as userId from users, posts where posts.id = $1 and posts.userEmail = users.email'
 	conn.query(sql, [request.body.postId], function(error, result) {
 		console.log(result.rows[0]);
 		response.json(result.rows[0]);
@@ -285,8 +313,8 @@ app.post('/savepost', function(request, response) {
 app.post('/updatePostInfo', function(request, response) {
   console.log("UPDATES: ");
   console.log(request.body);
-  var sql = 'UPDATE posts SET description = ?, zipcode = ?, type = ?, perishable = ?, servingSize = ?, img1 = ?, img2 = ?, img3 = ?, img4 = ? WHERE id = ?';
-  conn.query(sql, [request.body.description, request.body.zipcode, request.body.type, request.body.perishable, request.body.servingSize,
+  var sql = 'UPDATE posts SET title = ?, description = ?, zipcode = ?, type = ?, perishable = ?, servingSize = ?, img1 = ?, img2 = ?, img3 = ?, img4 = ? WHERE id = ?';
+  conn.query(sql, [request.body.title, request.body.description, request.body.zipcode, request.body.type, request.body.perishable, request.body.servingSize,
   request.body.img1, request.body.img2, request.body.img3, request.body.img4,request.body.postId], function(error, result) {
     if (error != null) { console.log(error); }
     response.json({status: "success"});
@@ -412,14 +440,17 @@ app.post('/getSearchResults', function(request, response){
 app.get('/sortNewest', function(request, response) {
 	// use sort-by package by npm
 
-	// var q = 'select posts.id, posts.title, posts.description, posts.createdAt, posts.zipcode, users.name, users.email, users.id as userId from users, posts where posts.userEmail = users.email and posts.available = 1;';
-	var q = 'select * from posts where available = 1;';
-	conn.query(q, function(err, result) {
 		// add each post to global posts array to use in sort-by
-		result.sort(sortBy('createdAt'));
-		response.json(result);
-	});
-	response.render('home.html');
+		console.log(posts);
+		posts.sort(sortBy('createdAt'));
+		response.json(posts);
+})
+
+app.get('/sortOldest', function(request, response) {
+	// use sort-by package by npm
+		console.log(posts);
+		posts.sort(sortBy('-createdAt'));
+		response.json(posts);
 })
 
 function sortLocations(zipcodes, current) {
@@ -539,7 +570,7 @@ app.post('/profile', function(request, response) {
 
 app.get('/profile=:userId', function(request, response) {
 	console.log("profile: userid!!?? : " + request.params.userId);
-	response.render('profile.html', {userId: request.params.userId, userEmail: request.params.email, userImg: request.session.userImg});
+	response.render('profile.html', {userId: request.params.userId, userEmail: request.params.email, userImg: request.session.userImg, currentUser: request.session.email});
 
 })
 
@@ -552,6 +583,6 @@ app.post('/updateUserInfo', function(request, response) {
 	})
 })
 
-server.listen(8000, function() {
+server.listen(8080, function() {
   console.log("Listening on port 8080");
 });

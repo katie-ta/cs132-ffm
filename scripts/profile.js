@@ -4,6 +4,7 @@ $(document).ready(function() {
 	var myEmail ="";
   const userId = $('meta[name=userId]').attr("content");
   const userEmail = $('meta[name=userEmail]').attr("content");
+  const currentUser = $('meta[name=userEmail]').attr("content");
   console.log(" user id! : " + userId);
   console.log("user email: " + userEmail);
   $('#edit').hide();
@@ -37,7 +38,7 @@ $(document).ready(function() {
 
 
 	if (profileInfo.facebook != "") {
-		$('.socMedia').append("<a href='" + profileInfo.facebook + "'><img class=\"socialLink\" src=\"facebook.ico\" alt=\"FB icon\"></a>&nbsp;");;
+		$('.socMedia').append("<a href=\"" + profileInfo.facebook + "\"><img class=\"socialLink\" src=\"facebook.ico\" alt=\"FB icon\"></a>&nbsp;");;
 	}
 
 	if (profileInfo.instagram != "") {
@@ -74,7 +75,7 @@ $(document).ready(function() {
           <div class="foodText">
               <a href="/post=${val.id}"><p class = "food">${val.title}</p></a>
               <p class = "description">${description}</p>
-              <p>Posted on:  ${val.createdAt}</p>
+              <p>Posted on:  ${formatDate(val.createdAt)}</p>
           </div>
             <input type="image" class="messageButton" src="message-button.png" alt="message button" data-toggle="modal" data-target="#messageModal">
             <input id="userEmail" type="hidden" value=${val.email}>

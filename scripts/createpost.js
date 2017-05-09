@@ -41,7 +41,12 @@ function createPost() {
   // note : TIMESTAMP in sql is stored as YYYY-MM-DD HH:MM:SS (non utc, I think)
   var dt = new Date($.now());
   console.log("dt : " + dt);
-  var timestamp = dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDay() + " " +  dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+  console.log("month: " + dt.getMonth());
+  console.log("day: " + dt.getDate());
+
+  
+  var timestamp = dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate()  + " " +  dt.getHours() + ":" + dt.getMinutes();
+  
   var response = {
     title: postTitle,
     description: description,
@@ -68,6 +73,9 @@ function createPost() {
 }
 
 $(document).ready(function() {
+  // console.log("current time: " + formatDate($.now()));
+  var dt = new Date($.now());
+  console.log("current month: " + monthNames[dt.getMonth()]);
   $('#submit-btn').on("click", createPost);
 
   $('#image1').change(function() {

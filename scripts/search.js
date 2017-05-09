@@ -4,6 +4,7 @@ $(document).ready(function() {
   function searchPosts() {
     // search for posts here using keywords
     console.log("searching for posts");
+$('.foodFeed').empty();
 
     var keywords = $('#keywords').val();
     console.log("initial keywords" + keywords);
@@ -73,7 +74,7 @@ $(document).ready(function() {
           <div class="foodText">
               <a href="/post=${val.id}" class="postTitle"><p class = "food">${val.title}</p></a>
               <p class = "description">${description}</p>
-              <p>Posted on: ${val.createdAt} </p>
+              <p>Posted on: ${formatDate(val.createdAt)} </p>
           </div>
             <a href="mailto:${val.userEmail}"><input type="image" class="messageButton" src="message-button.png" ></a>
         </div>`;

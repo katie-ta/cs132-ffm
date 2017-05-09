@@ -283,11 +283,12 @@ h1{
     color:#1F1E00;
 }
 .description{
-  font-size: 18px;
+  font-size: 15px;
     color:#95989A;
 }
 .userPhoto{
     width: 100px;
+    height: 100px;
     cursor: pointer;
     margin-left:20px;
     border-radius: 50%;
@@ -417,9 +418,9 @@ form{
     background-color:white;
     font-size: 1.3em;
     float:right;
-    margin-bottom:30px;
+    margin-bottom:0px;
     left:60%;
-    z-index:2000;
+    z-index:1;
 }
 
 #footer{

@@ -45,8 +45,8 @@
           <p> Are you sure you want to delete this post? </p>
         </div>
         <div class="modal-footer">
-          <button id="delete-post" type="button" class="btn btn-success editable" data-dismiss="modal">Yes</button>
-          <button type="button" class="btn btn-success editable" data-dismiss="modal">No</button>
+          <button id="delete-post" type="button" class="btn btn-success edits" data-dismiss="modal">Yes</button>
+          <button type="button" class="btn btn-success edits" data-dismiss="modal">No</button>
         </div>
       </div>
 
@@ -56,7 +56,7 @@
     <div class = "container">
         <h1 class="postTitle" style="margin-left:10%;"></h1>
         <div id="createPost">
-          <a href="mailto:${val.email}"><input type="image" class="messageButton" src="message-button.png" ></a>
+          <a id="messageButton"><input type="image" class="messageButton" src="message-button.png" ></a>
 
           <div class="label" id="labels">
 
@@ -122,30 +122,30 @@
             <p id="createdAt"></p>
           </div>
             <img id="img1" class="postImage rounded" alt="img1">
-            <label class="editable btn btn-default btn-file">
+            <label class="edits btn btn-default btn-file">
               Upload New <input type="file" style="display: none;" id="upload1">
             </label>
-            <button type="button" class="editable btn id-inline" id="delete1">Remove</button>
+            <button type="button" class="edits btn id-inline" id="delete1">Remove</button>
             <p class="test"></p>
           <img id="img2" class="postImage rounded " alt="img2">
-          <label class="editable btn btn-default btn-file">
+          <label class="edits btn btn-default btn-file">
             Upload New<input type="file" style="display: none;" id="upload2">
           </label>
-          <button type="button" class="editable btn id-inline" id="delete2">Remove</button>
+          <button type="button" class="edits btn id-inline" id="delete2">Remove</button>
           <p class="test"></p>
 
           <img id="img3" class="postImage rounded" alt="img3">
-          <label class="editable btn btn-default btn-file">
+          <label class="edits btn btn-default btn-file">
             Upload New<input type="file" style="display: none;" id="upload3">
           </label>
-          <button type="button" class="editable btn id-inline" id="delete3">Remove</button>
+          <button type="button" class="edits btn id-inline" id="delete3">Remove</button>
           <p class="test" ></p>
 
           <img id="img4" class="postImage rounded" alt="img4">
-          <label class="editable btn btn-default btn-file">
+          <label class="edits btn btn-default btn-file">
             Upload New<input type="file" style="display: none;" id="upload4">
           </label>
-          <button type="button" class="editable btn id-inline" id="delete4">Remove</button>
+          <button type="button" class="edits btn id-inline" id="delete4">Remove</button>
           <p class="test"></p>
 
         </div>
