@@ -90,7 +90,8 @@ $("#sortByOldest").click(function() {
 
       posts = response;
       $.each(response.rows, function(index, val) {
-        console.log("email " + val.email);
+        console.log(val);
+        console.log("email " + val.zipcode);
         console.log("user id?  " + val.userId);
         var description = val.description;
         if (description.length > 50) {

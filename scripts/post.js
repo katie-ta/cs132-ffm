@@ -215,7 +215,7 @@ $(document).ready(function() {
     $('#types').hide();
     $('.edits').hide();
     $('.test').hide();
-    $('.postImage').hide();
+    // $('.postImage').show();
       var $description=$('#description'), isEditable=$description.is('.editable');
       $description.prop('contenteditable',!isEditable).toggleClass('editable');
 
@@ -253,6 +253,12 @@ $(document).ready(function() {
           perishable = false;
           $("#perishableTag").text("Non-Perishable");
       }
+
+
+      if (!$('#img1').attr('src')) { $('#img1').hide() }
+      if (!$('#img2').attr('src')) { $('#img2').hide() }
+      if (!$('#img3').attr('src')) { $('#img3').hide() }
+      if (!$('#img4').attr('src')) { $('#img4').hide() }
 
       console.log($('#description').text());
       var edits = {
