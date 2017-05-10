@@ -11,13 +11,9 @@ $(document).ready(function() {
   $('#done').hide();
 
 	$.post("/profile/userInfo", {userId: userId}, function(response) {
-    // response should be json of all user info
-    console.log("profile info");
-    console.log(response);
 
 
 	var profileInfo = response;
-	console.log(profileInfo.name);
 	myName = profileInfo.name;
 	myZip = profileInfo.zipcode;
 	myEmail = profileInfo.email;
@@ -30,6 +26,7 @@ $(document).ready(function() {
 
 	$('#profileName').text(myName);
 	$('#profileZipcode').text(myZip);
+  $('#profilePhotoBig').attr('src', profileInfo.img);
   if (profileInfo.description) {
     $('#profileDescription').text(profileInfo.description);
   } else {

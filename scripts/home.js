@@ -86,13 +86,8 @@ $("#sortByOldest").click(function() {
   })
 
     $.get("/getAllPosts", function(response) {
-          console.log("respomse" + response);
-
       posts = response;
       $.each(response.rows, function(index, val) {
-        console.log(val);
-        console.log("email " + val.zipcode);
-        console.log("user id?  " + val.userId);
         var description = val.description;
         if (description.length > 50) {
           description = description.substring(0,50) + ". . .";

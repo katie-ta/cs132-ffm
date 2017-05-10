@@ -22,6 +22,8 @@ $(document).ready(function() {
 					})
 				} else if (response.status === "login does not exist") {
 					alert("Email does not exist!");
+				} else if (response.status === "incorrect password") {
+					alert("Incorrect password!");
 				}
 			});
 		}

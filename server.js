@@ -38,21 +38,15 @@ var S3_BUCKET = 'freefoodmvment'
 
 // stuff to use for bcrypt password encryptions
 const saltRounds = 10;
-const myPlaintextPassword = 's0/\/\P4$$w0rD';
-const someOtherPlaintextPassword = 'not_bacon';
 
-// create message table
-// const createMessageTable = 'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room INTEGER, user TEXT, body TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
 const createUserTable = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, zipcode TEXT, email TEXT, facebook TEXT, instagram TEXT, description TEXT, img TEXT)';
 const createPostTable = 'CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, userEmail INTEGER, title TEXT, description TEXT, createdAt TIMESTAMP, servingSize INTEGER, perishable BOOLEAN, type TEXT, zipcode TEXT, available BOOLEAN, img1 TEXT, img2 TEXT, img3 TEXT, img4 TEXT)';
-// const createRoomsTable = 'CREATE TABLE IF NOT EXISTS rooms (id INTEGER PRIMARY KEY, user1 TEXT, user2 TEXT, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);';
 
-app.use(session({secret: 'freefoodmovementsecretsecretthing'}));
 
-// create all table
-// conn.query( createMessageTable , function(error, data){
-//   if (error != null) { console.log(error); }
-// });
+app.use(session({
+	secret: 'freefoodmovementsecretsecretthing',
+	resave: true,
+    saveUninitialized: true}));
 
 conn.query( createUserTable , function(error, data){
   if (error != null) { console.log(error); }
@@ -62,12 +56,7 @@ conn.query( createPostTable , function(error, data){
   if (error != null) { console.log(error); }
 });
 
-// conn.query( createRoomsTable , function(error, data){
-//   if (error != null) { console.log(error); }
-// });
-
 var sess;
-
 function generateImgUrl(id) {
 	return 'https://s3.amazonaws.com/' + S3_BUCKET + '/' + id;
 }
@@ -98,8 +87,6 @@ app.get('/sign', function(req, res) {
 })
 
 app.get('/register', function(request, response) {
-	sess = request.session;
-	console.log(sess);
 	response.render('register.html');
 })
 
@@ -150,7 +137,6 @@ app.get('/login', function(request, response) {
 })
 
 app.post('/checkLogin', function(request, response) {
-	console.log(request);
 	var email = request.body.email;
 	var password = request.body.password;
 	var sql = 'SELECT * FROM users where email = $1'
@@ -159,9 +145,6 @@ app.post('/checkLogin', function(request, response) {
 		if(error!= null) { console.log(error); }
 
 		if (result.rowCount == 0) {
-			// TODO: display error message on client side if
-			// login doesn't exist and/or redirect user to create
-			// an account
 			response.json({status: "login does not exist"});
 		} else {
 				var hash = result.rows[0].password;
@@ -170,11 +153,16 @@ app.post('/checkLogin', function(request, response) {
 				bcrypt.compare(password, hash, function(err, res) {
 			    	// res == true
 			    	console.log(res);
-			    	request.session.email = email;
+			    	if (res) {
+			    		request.session.email = email;
 			    	request.session.userId = result.rows[0].id;
 			    	request.session.zipcode = result.rows[0].zipcode;
 			    	request.session.userImg = result.rows[0].img;
 			    	response.json({status: "success"});
+			    	} else {
+			    		response.json({status: "incorrect password"});
+			    	}
+			    	
 				});
 		}
 	})
@@ -189,11 +177,10 @@ app.get('/logout', function(request, response) {
 
 // get the home page
 app.get('/', function(request, response) {
-	sess = request.session;
-	console.log("session email: " + sess.email);
-	if (sess.email) {
+	console.log("session email: " + request.session.email);
+	if (request.session.email) {
 		console.log("there's an email!!!");
-		response.render('home.html', {currentUser: sess.email, userImg: request.session.userImg});
+		response.render('home.html', {currentUser: request.session.email, userImg: request.session.userImg});
 	} else {
 		console.log("no one's logged in :(");
 		response.render("signin.html");
@@ -213,7 +200,6 @@ app.get('/getAllPosts', function(request,response) {
 		console.log("result " + result);
 
 		if (result) {
-			console.log("result rows " + result.rowCount);
 			for (var i = 0; i < result.rowCount; i++) {
 				console.log(result.rows[i].perishable);
 				var post = {
@@ -227,13 +213,10 @@ app.get('/getAllPosts', function(request,response) {
 					userEmail: result.rows[i].email,
 					img: result.rows[i].img
 					}
-				console.log("New JSON Post created");
 
 				posts.push(result.rows[i]);
 			}
 		}
-		console.log("posts" + posts);
-		console.log("result" + result);
 		response.json(result);
 	});
 
@@ -338,9 +321,6 @@ app.get('/search', function(request, response) {
 	} else {
 		response.redirect('/login');
 	}
-
-
-
 });
 
 app.post('/getSearchResults', function(request, response){
